@@ -12,198 +12,60 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <style>
 :root{
-  --paper:#F2EEE3;
-  --paper-2:#EAE4D4;
-  --card:#FCFAF3;
-  --ink:#22301F;
-  --ink-soft:#5B6B54;
-  --line:#DAD3BE;
-  --moss:#4B6B4A;
-  --moss-dark:#374F37;
-  --moss-tint:#E4EBDF;
-  --clay:#B5592E;
-  --clay-tint:#F5E4D9;
-  --gold:#B9872B;
-  --gold-tint:#F3E7C9;
-  --sky:#3E6B7C;
-  --sky-tint:#DEE9EC;
-  --red:#A5433A;
-  --red-tint:#F4DEDA;
-  --purple:#7A5AA8;
-  --purple-tint:#E9E2F3;
-  --radius:14px;
-  --radius-sm:9px;
+  --paper:#F2EEE3; --paper-2:#EAE4D4; --card:#FCFAF3; --ink:#22301F; --ink-soft:#5B6B54;
+  --line:#DAD3BE; --moss:#4B6B4A; --moss-dark:#374F37; --moss-tint:#E4EBDF;
+  --clay:#B5592E; --clay-tint:#F5E4D9; --gold:#B9872B; --gold-tint:#F3E7C9;
+  --sky:#3E6B7C; --sky-tint:#DEE9EC; --red:#A5433A; --red-tint:#F4DEDA;
+  --purple:#7A5AA8; --purple-tint:#E9E2F3; --radius:14px; --radius-sm:99px;
   --shadow:0 1px 2px rgba(34,48,31,0.06), 0 6px 20px -8px rgba(34,48,31,0.15);
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--paper);
-  color:var(--ink);
-  font-family:'Inter',system-ui,sans-serif;
-  font-size:14.5px;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:14.5px;line-height:1.5;}
 h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;margin:0;color:var(--ink);}
 .mono{font-family:'IBM Plex Mono',monospace;}
-a{color:inherit;}
 button{font-family:inherit;cursor:pointer;}
 ::-webkit-scrollbar{width:9px;height:9px;}
 ::-webkit-scrollbar-thumb{background:#D2C9AC;border-radius:6px;}
-::-webkit-scrollbar-track{background:transparent;}
 
-/* layout */
 #app{display:flex;min-height:100vh;}
-.sidebar{
-  width:216px;flex-shrink:0;background:var(--paper-2);
-  border-right:1px solid var(--line);
-  padding:20px 14px;display:flex;flex-direction:column;gap:4px;
-  position:sticky;top:0;height:100vh;overflow-y:auto;
-}
+.sidebar{width:216px;flex-shrink:0;background:var(--paper-2);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
 .brand{display:flex;align-items:center;gap:9px;padding:4px 8px 18px 8px;}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--moss);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .brand-mark svg{width:17px;height:17px;stroke:var(--paper);}
 .brand-text{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;line-height:1.15;}
 .brand-text small{display:block;font-family:'Inter';font-weight:500;font-size:10.5px;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase;margin-top:1px;}
-.nav-item{
-  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;
-  color:var(--ink-soft);font-weight:500;font-size:13.5px;border:none;background:transparent;text-align:left;width:100%;
-  transition:background .12s, color .12s;
-}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--ink-soft);font-weight:500;font-size:13.5px;border:none;background:transparent;text-align:left;width:100%;transition:background .12s, color .12s;}
 .nav-item svg{width:16px;height:16px;stroke:currentColor;flex-shrink:0;}
 .nav-item:hover{background:#E1DBC6;color:var(--ink);}
 .nav-item.active{background:var(--moss);color:#fff;}
 .nav-item .badge{margin-left:auto;background:var(--clay);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;}
-.nav-item.active .badge{background:rgba(255,255,255,.25);}
-.nav-sep{height:1px;background:var(--line);margin:10px 4px;}
-.sidebar-foot{margin-top:auto;padding-top:10px;}
-.user-switch{display:flex;gap:6px;padding:8px;background:var(--card);border-radius:10px;border:1px solid var(--line);}
-.user-pill{flex:1;text-align:center;padding:6px 4px;border-radius:7px;font-size:12px;font-weight:600;border:none;background:transparent;color:var(--ink-soft);}
-.user-pill.active{background:var(--moss);color:#fff;}
-.sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-soft);padding:6px 8px 2px;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--moss);flex-shrink:0;}
-.sync-dot.off{background:var(--red);}
-.sync-dot.pending{background:var(--gold);}
 
 .main{flex:1;min-width:0;padding:26px 34px 60px;max-width:1180px;}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;}
 .page-title{font-size:26px;}
 .page-sub{color:var(--ink-soft);font-size:13px;margin-top:3px;}
-.search-box{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;width:260px;}
-.search-box svg{width:15px;height:15px;stroke:var(--ink-soft);flex-shrink:0;}
-.search-box input{border:none;background:transparent;outline:none;font-size:13px;width:100%;color:var(--ink);font-family:inherit;}
 
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:9px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:13px;color:var(--ink);white-space:nowrap;}
 .btn:hover{border-color:var(--moss);}
 .btn svg{width:14px;height:14px;stroke:currentColor;}
 .btn-primary{background:var(--moss);border-color:var(--moss);color:#fff;}
 .btn-primary:hover{background:var(--moss-dark);}
-.btn-clay{background:var(--clay);border-color:var(--clay);color:#fff;}
-.btn-ghost{background:transparent;border-color:transparent;padding:6px 8px;}
 .btn-sm{padding:6px 10px;font-size:12px;}
-.btn-danger{color:var(--red);}
-.quickbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
 
-.grid{display:grid;gap:16px;}
-.grid-cards{grid-template-columns:repeat(auto-fill,minmax(228px,1fr));}
-.grid-2{grid-template-columns:1.3fr 1fr;}
-.grid-3{grid-template-columns:repeat(3,1fr);}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
-
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
-.card-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.card-title h3{font-size:15px;}
-.card-title .count{color:var(--ink-soft);font-size:12px;}
-
-.section-block{margin-bottom:26px;}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.section-head h2{font-size:17px;}
-.eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600;margin-bottom:4px;}
-
-/* pet card */
-.pet-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s;}
-.pet-card:hover{transform:translateY(-2px);}
-.pet-photo{height:118px;background:linear-gradient(135deg,var(--moss-tint),var(--sky-tint));display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;}
-.pet-photo img{width:100%;height:100%;object-fit:cover;}
-.status-chip{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,.85);}
-.pet-info{padding:12px 14px 14px;}
-.pet-info .name{font-family:'Fraunces';font-weight:600;font-size:16px;}
-.pet-info .meta{color:var(--ink-soft);font-size:12px;margin-top:2px;}
-.pet-info .stats-row{display:flex;gap:12px;margin-top:10px;font-size:11.5px;color:var(--ink-soft);}
-.pet-info .stats-row b{color:var(--ink);font-family:'IBM Plex Mono';font-weight:600;}
-
-/* list rows */
-.list-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px;}
+.list-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line);}
 .list-row:last-child{border-bottom:none;}
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dot-moss{background:var(--moss);} .dot-clay{background:var(--clay);} .dot-gold{background:var(--gold);} .dot-sky{background:var(--sky);} .dot-red{background:var(--red);} .dot-purple{background:var(--purple);}
+.dot-moss{background:var(--moss);} .dot-clay{background:var(--clay);} .dot-sky{background:var(--sky);}
 .row-main{flex:1;min-width:0;}
-.row-title{font-weight:600;font-size:13px;}
-.row-sub{color:var(--ink-soft);font-size:11.5px;margin-top:1px;}
-.row-right{font-size:12px;color:var(--ink-soft);white-space:nowrap;font-family:'IBM Plex Mono';}
+.row-title{font-weight:600;font-size:13.5px;}
+.row-sub{color:var(--ink-soft);font-size:12px;margin-top:2px;}
+.row-right{font-size:12px;color:var(--ink-soft);white-space:nowrap;font-family:'IBM Plex Mono';margin-right:6px;}
 .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;}
 .pill-clay{background:var(--clay-tint);color:var(--clay);}
 .pill-moss{background:var(--moss-tint);color:var(--moss-dark);}
-.pill-gold{background:var(--gold-tint);color:var(--gold);}
-.pill-sky{background:var(--sky-tint);color:var(--sky);}
-.pill-red{background:var(--red-tint);color:var(--red);}
 .pill-purple{background:var(--purple-tint);color:var(--purple);}
-.empty-note{color:var(--ink-soft);font-size:12.5px;padding:10px 2px;}
-
-/* progress */
-.progress-track{height:8px;background:var(--paper-2);border-radius:20px;overflow:hidden;margin-top:6px;}
-.progress-fill{height:100%;border-radius:20px;background:var(--moss);}
-
-/* tabs */
-.tabbar{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto;}
-.tabbtn{padding:9px 14px;font-size:12.5px;font-weight:600;color:var(--ink-soft);background:transparent;border:none;border-bottom:2px solid transparent;white-space:nowrap;}
-.tabbtn.active{color:var(--moss-dark);border-bottom-color:var(--moss);}
-
-/* forms & modal */
-.overlay{position:fixed;inset:0;background:rgba(34,48,31,.42);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto;}
-.modal{background:var(--card);border-radius:16px;width:100%;max-width:520px;padding:22px 24px 24px;box-shadow:0 20px 60px -12px rgba(0,0,0,.35);}
-.modal h3{font-size:17px;margin-bottom:16px;}
-.field{margin-bottom:12px;}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
-.field input,.field select,.field textarea{
-  width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);outline:none;
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--moss);}
-.field textarea{resize:vertical;min-height:60px;}
-.field-row{display:flex;gap:10px;}
-.field-row>*{flex:1;}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap;}
-.close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:var(--ink-soft);}
-
-/* calendar */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
-.cal-dow{font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);text-align:center;font-weight:700;padding-bottom:4px;}
-.cal-day{min-height:78px;border:1px solid var(--line);border-radius:9px;padding:6px;background:var(--card);font-size:11px;position:relative;cursor:pointer;}
-.cal-day.other{opacity:.35;}
-.cal-day.today{border-color:var(--moss);box-shadow:inset 0 0 0 1px var(--moss);}
-.cal-day .num{font-family:'IBM Plex Mono';font-weight:600;font-size:11.5px;}
-.cal-evt{margin-top:3px;padding:2px 5px;border-radius:5px;font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-/* toast */
-#toast{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:200;}
-.toast{background:var(--ink);color:#fff;padding:10px 16px;border-radius:9px;font-size:13px;box-shadow:var(--shadow);animation:toastin .15s ease;}
-@keyframes toastin{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-
-.warn-banner{display:flex;gap:10px;align-items:flex-start;background:var(--red-tint);border:1px solid #E3B5AC;color:var(--red);padding:10px 13px;border-radius:10px;font-size:12.5px;margin-bottom:10px;}
-.warn-banner svg{width:15px;height:15px;stroke:var(--red);flex-shrink:0;margin-top:1px;}
-
-.timeline{position:relative;padding-left:20px;}
-.timeline:before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:1px;background:var(--line);border-left:2px dashed var(--line);}
-.tl-item{position:relative;padding-bottom:16px;}
-.tl-item:before{content:'';position:absolute;left:-19px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--moss);border:2px solid var(--card);}
-.tl-date{font-family:'IBM Plex Mono';font-size:11px;color:var(--ink-soft);}
-.tl-title{font-weight:600;font-size:13px;margin-top:1px;}
-.tl-sub{font-size:11.5px;color:var(--ink-soft);}
-
-.stat-big{font-family:'IBM Plex Mono';font-weight:600;font-size:24px;}
-.stat-label{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
-.two-col-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pill-sky{background:var(--sky-tint);color:var(--sky);}
 
 .icon-btn{background:none;border:none;padding:5px;border-radius:6px;color:var(--ink-soft);}
 .icon-btn:hover{background:var(--paper-2);color:var(--ink);}
@@ -211,1616 +73,384 @@ button{font-family:inherit;cursor:pointer;}
 .icon-btn.complete-btn{color:var(--moss);}
 .icon-btn.complete-btn:hover{background:var(--moss-tint);color:var(--moss-dark);}
 
-.chip-select{display:flex;flex-wrap:wrap;gap:6px;}
-.chip-opt{padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink-soft);}
-.chip-opt.active{background:var(--moss);border-color:var(--moss);color:#fff;}
-
-.photo-pick{display:flex;align-items:center;gap:10px;}
-.photo-pick .preview{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--paper-2);flex-shrink:0;}
-
-@media print{
-  .sidebar,.topbar,.quickbar,.tabbar,.no-print{display:none !important;}
-  body{background:#fff;}
-  .main{max-width:100%;padding:0;}
-}
-@media(max-width:760px){
-  .sidebar{position:fixed;left:-230px;transition:left .2s;z-index:150;}
-  .sidebar.open{left:0;}
-  .main{padding:16px;}
-  .grid-2,.grid-3{grid-template-columns:1fr;}
-  .search-box{width:150px;}
-}
+.overlay{position:fixed;inset:0;background:rgba(34,48,31,.42);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto;}
+.modal{background:var(--card);border-radius:16px;width:100%;max-width:520px;padding:22px 24px 24px;box-shadow:0 20px 60px -12px rgba(0,0,0,.35);position:relative;}
+.modal h3{font-size:17px;margin-bottom:16px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);outline:none;}
+.field-row{display:flex;gap:10px;} .field-row>*{flex:1;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+.empty-note{color:var(--ink-soft);font-size:13px;padding:12px 2px;}
+.action-card-option{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color .15s, background .15s;}
+.action-card-option:hover{border-color:var(--moss);background:#fff;}
+.action-card-option h4{font-size:14px;margin-bottom:3px;color:var(--moss-dark);}
+.action-card-option p{margin:0;font-size:12px;color:var(--ink-soft);}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<div id="toast"></div>
 
 <script>
-/* ============ ICONS ============ */
 const ICONS = {
-  home:'<path d="M3 10.5 10 4l7 6.5"/><path d="M5 9v7h10V9"/>',
   paw:'<circle cx="5" cy="6" r="1.6"/><circle cx="9" cy="4" r="1.6"/><circle cx="13" cy="6" r="1.6"/><path d="M9 9c-3 0-5 2.4-4.6 4.7.3 1.7 1.9 2.6 3.2 1.9.9-.5 1.7-.5 2.6 0 1.3.7 3-.2 3.2-1.9C13.9 11.4 12 9 9 9Z"/>',
-  cal:'<rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/>',
-  bell:'<path d="M5 8a5 5 0 0 1 10 0c0 4 1.5 5 1.5 5h-13S5 12 5 8Z"/><path d="M8 16a2 2 0 0 0 4 0"/>',
-  box:'<path d="M3 6l7-3 7 3-7 3-7-3Z"/><path d="M3 6v8l7 3 7-3V6"/><path d="M10 9v8"/>',
-  wallet:'<rect x="2" y="5" width="16" height="11" rx="2"/><path d="M2 9h16"/><circle cx="14" cy="12.5" r="1"/>',
-  piggy:'<path d="M4 9a5 5 0 0 1 9-3l2-1v3l-1 1v2l1 2-2 1v2H7v-2c-2 0-3-1.5-3-3.5Z"/><circle cx="7" cy="9" r=".7"/>',
-  archive:'<rect x="3" y="4" width="14" height="4" rx="1"/><path d="M4 8v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8"/><path d="M8 11h4"/>',
-  search:'<circle cx="8.5" cy="8.5" r="5.5"/><path d="M17 17l-4-4"/>',
   plus:'<path d="M10 4v12M4 10h12"/>',
-  x:'<path d="M5 5l10 10M15 5 5 15"/>',
   edit:'<path d="M13 3l4 4-9 9-4.5 1 1-4.5L13 3Z"/>',
   trash:'<path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10"/>',
-  chart:'<path d="M4 15V9M9 15V4M14 15v-6"/><path d="M2 17h16"/>',
-  print:'<rect x="4" y="7" width="12" height="7" rx="1"/><path d="M6 7V3h8v4"/><path d="M6 14v3h8v-3"/>',
-  file:'<path d="M6 2h6l3 3v13H6V2Z"/><path d="M12 2v3h3"/>',
-  scale:'<path d="M10 3v14M4 6h12M4 6l-2 5a3 3 0 0 0 4 0L4 6Zm12 0l-2 5a3 3 0 0 0 4 0l-2-5Z"/>',
-  settings:'<circle cx="10" cy="10" r="2.6"/><path d="M10 2v2.2M10 15.8V18M4 5l1.5 1.5M14.5 13.5 16 15M2 10h2.2M15.8 10H18M4 15l1.5-1.5M14.5 6.5 16 5"/>',
   syringe:'<path d="M13 3l4 4-2 2-4-4 2-2Z"/><path d="M13.5 5.5 6 13v3H3v-3l7.5-7.5"/><path d="M9 9l2 2M7 11l2 2"/>',
   drop:'<path d="M10 3s5 5.8 5 9.2A5 5 0 1 1 5 12.2C5 8.8 10 3 10 3Z"/>',
-  skip:'<path d="M5 4l8 6-8 6V4Z"/><path d="M14 4v12"/>',
-  cake:'<path d="M3 17v-5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M3 13c1 1 2 1 3 0s2-1 3 0 2 1 3 0 2-1 3 0 2 1 3 0"/><path d="M10 6V3"/><path d="M10 3c-.6 0-1-.5-1-1s.4-1 1-1 1 .5 1 1-.4 1-1 1Z"/>',
   check:'<path d="M4 10.5l4 4 8-9"/>'
 };
-function icon(name){return `<svg viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;}
+function icon(name){ return `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`; }
 
-/* ============ FIREBASE ============ */
-const firebaseConfig = {
-  apiKey: "AIzaSyDOQSPrLXSf7hpwwieChBzXvQwGaqD0PpI",
-  authDomain: "saver-money.firebaseapp.com",
-  databaseURL: "https://saver-money-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "saver-money",
-  storageBucket: "saver-money.firebasestorage.app",
-  messagingSenderId: "557752945402",
-  appId: "1:557752945402:web:240da5cad31c9bfea11743",
-  measurementId: "G-0X8BMC1635"
+/* STATE & FIREBASE MOCK / INITIALIZATION */
+let state = {
+  pets: [{id:'p1', name:'Шиба', species:'Собака'}],
+  healthEvents: [
+    {id:'h1', petId:'p1', type:'вакцинация', group:'бешенство', title:'Рабизин', date:'2025-08-14', validDays:365, nextDate:'2026-08-14', status:'active', comment:''},
+    {id:'h2', petId:'p1', type:'обработка', subtype:'от блох и клещей', title:'Симпарика', brand:'Zoetis', date:'2026-05-14', validDays:90, nextDate:'2026-08-12', status:'active', comment:''}
+  ]
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const petDashRef = db.ref('petDashboard/data');
-const expensesRef = db.ref('budget/animalExpenses');
-const fundsRef = db.ref('petFunds');
-let syncState = 'pending'; // pending | ok | off
 
-/* ============ STATE ============ */
-let state = null;
-let saveTimer = null;
-let pendingWrite = false; // true while a local save is queued or in-flight
-const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const todayISO = ()=> new Date().toISOString().slice(0,10);
-function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const todayISO = () => new Date().toISOString().slice(0, 10);
+function addDays(iso, n){ const d = new Date(iso+'T00:00:00'); d.setDate(d.getDate() + Number(n)); return d.toISOString().slice(0,10); }
 function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function fmtMoney(n){ return (Math.round(n*100)/100).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2})+' €'; }
-function monthNameRu(date){
-  const d = date||new Date();
-  const s = d.toLocaleDateString('ru-RU',{month:'long'});
-  return s.charAt(0).toUpperCase()+s.slice(1);
-}
-function pluralRu(n,f1,f2,f5){
-  n = Math.abs(n)%100;
-  const n1 = n%10;
-  if(n>10 && n<20) return f5;
-  if(n1>1 && n1<5) return f2;
-  if(n1===1) return f1;
-  return f5;
-}
-function ageStr(dob){
-  if(!dob) return '—';
-  const birth = new Date(dob+'T00:00:00');
-  const now = new Date();
-  if(isNaN(birth)) return '—';
-  let years = now.getFullYear()-birth.getFullYear();
-  let months = now.getMonth()-birth.getMonth();
-  if(now.getDate()<birth.getDate()) months--;
-  if(months<0){ years--; months+=12; }
-  if(years<0) years=0;
-  const parts = [];
-  if(years>0) parts.push(years+' '+pluralRu(years,'год','года','лет'));
-  if(months>0 || years===0) parts.push(months+' '+pluralRu(months,'месяц','месяца','месяцев'));
-  return parts.join(' ') || 'меньше месяца';
-}
-function resizeImageFile(file, maxSize=360, quality=0.82){
-  return new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onerror = ()=>reject(new Error('read failed'));
-    reader.onload = ()=>{
-      const img = new Image();
-      img.onerror = ()=>reject(new Error('image load failed'));
-      img.onload = ()=>{
-        let {width,height} = img;
-        if(width>height){ if(width>maxSize){ height = Math.round(height*maxSize/width); width = maxSize; } }
-        else { if(height>maxSize){ width = Math.round(width*maxSize/height); height = maxSize; } }
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img,0,0,width,height);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
-/* helpers to keep budget/animalExpenses and petFunds as clean 0..n arrays,
-   matching the structure already used by the "Наш Бюджет" site */
-function arrFromSnapshot(snap){
-  const v = snap.val();
-  if(!v) return [];
-  return Array.isArray(v) ? v.filter(x=>x!=null) : Object.keys(v).sort((a,b)=>a-b).map(k=>v[k]);
-}
-function nextArrId(arr){
-  return arr.reduce((m,x)=> Math.max(m, Number(x?.id)||0), 0) + 1;
-}
-async function pushToArrayRef(ref, item){
-  const snap = await ref.once('value');
-  const arr = arrFromSnapshot(snap);
-  item.id = nextArrId(arr);
-  arr.push(item);
-  await ref.set(arr);
-  return item;
-}
-async function updateArrayItem(ref, matchId, patch){
-  const snap = await ref.once('value');
-  const arr = arrFromSnapshot(snap);
-  const idx = arr.findIndex(x=>Number(x.id)===Number(matchId));
-  if(idx===-1) return;
-  arr[idx] = {...arr[idx], ...patch};
-  await ref.set(arr);
-}
-async function removeArrayItem(ref, matchId){
-  const snap = await ref.once('value');
-  const arr = arrFromSnapshot(snap).filter(x=>Number(x.id)!==Number(matchId));
-  await ref.set(arr);
-}
+let route = { tab: 'vaccinations' };
+let currentModal = null;
 
-const DEFAULT_STATE = ()=>({
-  pets:[],
-  weightLogs:[],
-  healthEvents:[],
-  vetVisits:[],
-  documents:[],
-  expenses:[],
-  savings:[],
-  events:[],
-  supplies:[],
-  reminderSettings:{offsets:[30,14,7,3,1]},
-  currentUser:'Кристина',
-  archive:[]
-});
-
-async function loadState(){
-  state = DEFAULT_STATE();
-  try{
-    const snap = await petDashRef.once('value');
-    const remote = snap.val();
-    if(remote){
-      Object.assign(state, remote, {expenses: state.expenses, savings: state.savings});
-    }
-    // NOTE: intentionally NOT auto-writing default/demo data to Firebase when
-    // remote is empty. Auto-writing here was clobbering real data on other
-    // devices whenever a read raced ahead of the real data (or the app was
-    // opened before the real database finished loading), and it re-seeded
-    // fake demo pets/vaccinations that nobody actually created.
-    syncState = 'ok';
-  }catch(e){
-    console.error('load failed', e); syncState='off';
-  }
-  migrateAndRoll();
-
-  // live updates from other devices/users for the pet-dashboard's own data
-  petDashRef.on('value', snap=>{
-    // While we have a local change queued/in-flight, ignore incoming echoes.
-    // Otherwise a remote snapshot that predates our own edit can silently
-    // overwrite (undo) a delete/edit made a moment ago, before our own
-    // write has landed - this is what caused "deleted items reappear" and
-    // "different data on different devices".
-    if(pendingWrite) return;
-    const remote = snap.val();
-    if(!remote) return;
-    Object.assign(state, remote, {expenses: state.expenses, savings: state.savings});
-    migrateAndRoll();
-    render();
-  });
-
-  // live sync with the shared budget app: расходы «Животные»
-  expensesRef.on('value', snap=>{
-    const arr = arrFromSnapshot(snap);
-    state.expenses = arr.map(e=>({
-      id: e.id, petId: e.petId || null, date: e.date, amount: Number(e.amount)||0,
-      category: e.cat || e.category || 'другое', comment: e.comment || '', pay: e.pay || 'cash'
-    }));
-    render();
-  });
-
-  // live sync with the shared budget app: копилки «Фонд животных» (petFunds)
-  // real schema: color, currentSaved, cycleDays, emoji, id, lastPurchaseDate,
-  // linkedPlanId, monthlyAmount, name, purchaseHistory, totalCost
-  fundsRef.on('value', snap=>{
-    const arr = arrFromSnapshot(snap);
-    state.savings = arr.map(f=>({
-      id: f.id, name: f.name || 'Без названия',
-      current: Number(f.currentSaved)||0,
-      monthly: Number(f.monthlyAmount)||0,
-      cycleDays: f.cycleDays||null,
-      goal: Number(f.totalCost)>0 ? Number(f.totalCost) : null,
-      totalCost: Number(f.totalCost)||0,
-      emoji: f.emoji, color: f.color,
-      lastPurchaseDate: f.lastPurchaseDate||null,
-      linkedPlanId: f.linkedPlanId||null,
-      history: f.purchaseHistory||[]
-    }));
-    render();
-  });
-
-  db.ref('.info/connected').on('value', snap=>{
-    syncState = snap.val()? 'ok':'off';
-    const dot = document.getElementById('syncDot'); const label = document.getElementById('syncLabel');
-    if(dot){ dot.className = 'sync-dot '+(syncState==='ok'?'':'off'); }
-    if(label){ label.textContent = syncState==='ok' ? 'Синхронизировано' : 'Нет связи'; }
-  });
-}
-function scheduleSave(){
-  clearTimeout(saveTimer);
-  pendingWrite = true;
-  const dot = document.getElementById('syncDot'); if(dot) dot.className='sync-dot pending';
-  saveTimer = setTimeout(()=>persist(), 500);
-}
-async function persist(){
-  try{
-    const {expenses, savings, ...rest} = state; // expenses/savings live in the shared budget nodes, not here
-    await petDashRef.set(rest);
-    syncState = 'ok';
-  }
-  catch(e){ console.error('save failed', e); syncState='off'; toast('Не удалось сохранить данные — проверьте связь'); }
-  finally{
-    pendingWrite = false; // only now is it safe to accept remote echoes again
-  }
-  const dot = document.getElementById('syncDot'); const label = document.getElementById('syncLabel');
-  if(dot){ dot.className = 'sync-dot '+(syncState==='ok'?'':'off'); }
-  if(label){ label.textContent = syncState==='ok' ? 'Синхронизировано' : 'Нет связи'; }
-}
-function migrateAndRoll(){
-  // roll forward recurring calendar events that are past due
-  const today = todayISO();
-  let changed=false;
-  state.events.forEach(ev=>{
-    if(!ev.done && ev.repeatEveryDays && ev.date < today){
-      let d = ev.date;
-      while(d < today){ d = addDays(d, ev.repeatEveryDays); }
-      ev.date = d;
-      changed=true;
-    }
-  });
-  if(changed) scheduleSave();
-}
-function addDays(iso,n){ const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-
-function toast(msg){
-  const el=document.createElement('div'); el.className='toast'; el.textContent=msg;
-  document.getElementById('toast').appendChild(el);
-  setTimeout(()=>el.remove(),2800);
-}
-
-/* ============ ROUTING ============ */
-let route = {tab:'dashboard', petId:null, petTab:'overview'};
-function nav(tab, petId=null, petTab='overview'){
-  route = {tab, petId, petTab};
-  render();
-  window.scrollTo(0,0);
-}
-
-/* ============ DERIVED / REMINDERS ============ */
-function activePets(){ return state.pets.filter(p=>!state.archive.includes(p.id)); }
-function petById(id){ return state.pets.find(p=>p.id===id); }
-
-function upcomingItems(){
-  // merge calendar events + health event next-dates + vet visits planned
-  const items = [];
-  state.events.filter(e=>!e.done).forEach(e=>{
-    items.push({date:e.date, title:e.title, type:e.type, petId:e.petId, source:'event', id:e.id});
-  });
-  state.healthEvents.forEach(h=>{
-    if(h.nextDate){
-      items.push({date:h.nextDate, title:(h.type==='обработка'?'Обработка':(h.type==='вакцинация'?'Прививка':h.title))+' — '+(petById(h.petId)?.name||''), type:h.type, petId:h.petId, source:'health', id:h.id});
-    }
-  });
-  state.vetVisits.filter(v=>v.date>=todayISO()).forEach(v=>{
-    items.push({date:v.date, title:'Визит к ветеринару — '+(petById(v.petId)?.name||''), type:'ветеринар', petId:v.petId, source:'vet', id:v.id});
-  });
-  // dedupe similar same-day+title
-  const seen = new Set();
-  const uniq = items.filter(it=>{ const k=it.date+it.title; if(seen.has(k)) return false; seen.add(k); return true; });
-  return uniq.sort((a,b)=> a.date.localeCompare(b.date));
-}
-function urgencyDot(days){
-  if(days<=1) return 'dot-red';
-  if(days<=3) return 'dot-clay';
-  if(days<=7) return 'dot-gold';
-  return 'dot-moss';
-}
-function typeDot(type){
-  if(type==='обработка') return 'dot-clay';
-  if(type==='вакцинация') return 'dot-moss';
-  if(type==='ветеринар') return 'dot-sky';
-  if(type==='день_рождения') return 'dot-purple';
-  return 'dot-gold';
-}
-
-function lowSupplies(){
-  return state.supplies.map(s=>{
-    const daysLeft = s.avgConsumption>0 ? Math.floor(s.currentStock/s.avgConsumption) : 999;
-    return {...s, daysLeft};
-  }).sort((a,b)=>a.daysLeft-b.daysLeft);
-}
-function supplyTargetLabel(petId){
-  if(petId==='all') return 'Все животные';
-  if(petId==='group:dogs') return 'Собаки';
-  if(petId==='group:cats') return 'Кошки';
-  if(petId==='group:kittens') return 'Котята';
-  return petById(petId)?.name || '—';
-}
-function monthExpenses(petId=null){
-  const now = new Date();
-  const y = now.getFullYear(), m = now.getMonth();
-  return state.expenses.filter(e=>{
-    if(!e.date) return false;
-    const d = new Date(e.date+'T00:00:00');
-    if(isNaN(d)) return false;
-    return d.getFullYear()===y && d.getMonth()===m && (!petId || e.petId===petId);
-  }).reduce((s,e)=>s+(Number(e.amount)||0),0);
-}
-function periodExpenses(days,petId=null){
-  const cutoff = addDays(todayISO(), -days);
-  return state.expenses.filter(e=> e.date>=cutoff && (!petId || e.petId===petId));
-}
-
-/* ============ RENDER SHELL ============ */
 function render(){
   const app = document.getElementById('app');
   app.innerHTML = `
-    ${sidebar()}
+    <div class="sidebar">
+      <div class="brand"><div class="brand-mark">${icon('paw')}</div><div class="brand-text">Полевой журнал<small>Pet Dashboard</small></div></div>
+      <button class="nav-item ${route.tab==='vaccinations'?'active':''}" onclick="route.tab='vaccinations';render();">${icon('syringe')}<span>Прививки</span></button>
+      <button class="nav-item ${route.tab==='treatments'?'active':''}" onclick="route.tab='treatments';render();">${icon('drop')}<span>Обработки</span></button>
+    </div>
     <div class="main">
-      ${route.tab==='dashboard'?renderDashboard():''}
-      ${route.tab==='pets'?renderPetsList():''}
-      ${route.tab==='pet'?renderPetDetail():''}
-      ${route.tab==='calendar'?renderCalendar():''}
-      ${route.tab==='reminders'?renderReminders():''}
-      ${route.tab==='vaccinations'?renderVaccinationsPage():''}
-      ${route.tab==='treatments'?renderTreatmentsPage():''}
-      ${route.tab==='supplies'?renderSupplies():''}
-      ${route.tab==='expenses'?renderExpenses():''}
-      ${route.tab==='savings'?renderSavings():''}
-      ${route.tab==='archive'?renderArchive():''}
-      ${route.tab==='settings'?renderSettings():''}
+      ${route.tab==='vaccinations' ? renderVaccinationsPage() : renderTreatmentsPage()}
     </div>
-  `;
-  bindGlobalEvents();
-}
-
-function sidebar(){
-  const items = [
-    ['dashboard','home','Дашборд'],
-    ['pets','paw','Животные'],
-    ['calendar','cal','Календарь'],
-    ['reminders','bell','Напоминания', upcomingItems().filter(i=>daysBetween(todayISO(),i.date)<=7 && daysBetween(todayISO(),i.date)>=0).length],
-    ['vaccinations','syringe','Прививки'],
-    ['treatments','drop','Обработки'],
-    ['supplies','box','Запасы', lowSupplies().filter(s=>s.daysLeft<=7).length],
-    ['expenses','wallet','Расходы'],
-    ['savings','piggy','Копилки'],
-    ['archive','archive','Архив'],
-  ];
-  return `
-  <div class="sidebar" id="sidebarEl">
-    <div class="brand">
-      <div class="brand-mark">${icon('paw')}</div>
-      <div class="brand-text">Полевой журнал<small>Pet Dashboard</small></div>
-    </div>
-    ${items.map(([tab,ic,label,count])=>`
-      <button class="nav-item ${route.tab===tab?'active':''}" data-nav="${tab}">
-        ${icon(ic)}<span>${label}</span>${count?`<span class="badge">${count}</span>`:''}
-      </button>`).join('')}
-    <div class="nav-sep"></div>
-    <button class="nav-item ${route.tab==='settings'?'active':''}" data-nav="settings">${icon('settings')}<span>Настройки</span></button>
-    <div class="sidebar-foot">
-      <div class="eyebrow" style="margin-bottom:6px;">Кто сейчас в системе</div>
-      <div class="user-switch">
-        <button class="user-pill ${state.currentUser==='Кристина'?'active':''}" data-user="Кристина">Кристина</button>
-        <button class="user-pill ${state.currentUser==='Диана'?'active':''}" data-user="Диана">Диана</button>
-      </div>
-      <div class="sync-status"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Синхронизировано</span></div>
-    </div>
-  </div>`;
-}
-
-function bindGlobalEvents(){
-  document.querySelectorAll('[data-nav]').forEach(b=> b.onclick = ()=> nav(b.dataset.nav));
-  document.querySelectorAll('[data-user]').forEach(b=> b.onclick = ()=>{ state.currentUser=b.dataset.user; scheduleSave(); render(); });
-  document.querySelectorAll('[data-open-pet]').forEach(b=> b.onclick = ()=> nav('pet', b.dataset.openPet,'overview'));
-  const search = document.getElementById('globalSearch');
-  if(search) search.oninput = (e)=> renderSearchResults(e.target.value);
-}
-
-/* ============ DASHBOARD ============ */
-function renderDashboard(){
-  const up = upcomingItems().slice(0,6);
-  const low = lowSupplies().filter(s=>s.daysLeft<=21).slice(0,4);
-  const spend = monthExpenses();
-  const savingsTotal = state.savings.reduce((s,x)=>s+x.current,0);
-  const savingsGoalTotal = state.savings.reduce((s,x)=>s+(x.goal||0),0);
-  const warnings = buildWarnings();
-
-  return `
-  <div class="topbar">
-    <div>
-      <div class="page-title">Здравствуйте, ${state.currentUser}</div>
-      <div class="page-sub">${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})} · ${activePets().length} животных в системе</div>
-    </div>
-    ${searchBox()}
-  </div>
-  ${quickActions()}
-  ${warnings.map(w=>`<div class="warn-banner">${icon('bell')}<div>${w}</div></div>`).join('')}
-
-  <div class="section-block">
-    <div class="section-head"><h2>Ваши животные</h2><button class="btn btn-sm" data-nav="pets">Все животные →</button></div>
-    <div class="grid grid-cards">${activePets().map(petCardMini).join('')}</div>
-  </div>
-
-  <div class="grid grid-2">
-    <div class="section-block">
-      <div class="card">
-        <div class="card-title"><h3>Ближайшие события</h3><span class="count">${upcomingItems().length} всего</span></div>
-        ${up.length? up.map(it=>{
-          const d = daysBetween(todayISO(), it.date);
-          const dayLabel = d===0?'Сегодня':d===1?'Завтра':d<0?`${Math.abs(d)} дн. назад`:`через ${d} дн.`;
-          return `<div class="list-row">
-            <span class="dot ${typeDot(it.type)}"></span>
-            <div class="row-main"><div class="row-title">${it.title}</div><div class="row-sub">${fmtDate(it.date)} · ${dayLabel}</div></div>
-          </div>`;
-        }).join('') : `<div class="empty-note">Ближайших событий нет.</div>`}
-      </div>
-    </div>
-    <div class="section-block">
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-title"><h3>Расходы за месяц</h3></div>
-        <div class="stat-big">${fmtMoney(spend)}</div>
-        <div class="stat-label">${monthNameRu()} · по всем животным</div>
-      </div>
-      <div class="card">
-        <div class="card-title"><h3>Накопления на животных</h3></div>
-        <div class="stat-big">${fmtMoney(savingsTotal)}<span style="font-size:14px;color:var(--ink-soft);"> / ${fmtMoney(savingsGoalTotal)}</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:${savingsGoalTotal? Math.min(100,savingsTotal/savingsGoalTotal*100):0}%;"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-block">
-    <div class="card">
-      <div class="card-title"><h3>Скоро закончится</h3><button class="btn btn-sm" data-nav="supplies">Запасы →</button></div>
-      ${low.length? low.map(s=>`<div class="list-row">
-        <span class="dot ${s.daysLeft<=7?'dot-red':'dot-gold'}"></span>
-        <div class="row-main"><div class="row-title">${s.name}</div><div class="row-sub">${supplyTargetLabel(s.petId)} · осталось ${s.currentStock} ${s.unit} · расход ~${s.avgConsumption} ${s.unit}/день</div></div>
-        <div class="row-right">${s.daysLeft<999? 'через '+s.daysLeft+' дн.':'—'}</div>
-      </div>`).join('') : `<div class="empty-note">Все запасы в норме.</div>`}
-    </div>
-  </div>
-  ${modalHost()}
-  `;
-}
-function buildWarnings(){
-  const w = [];
-  upcomingItems().forEach(it=>{
-    const d = daysBetween(todayISO(), it.date);
-    if(d>=0 && d<=1) w.push(`«${it.title}» — ${d===0?'сегодня':'завтра'}.`);
-  });
-  lowSupplies().forEach(s=>{ if(s.daysLeft<=3) w.push(`«${s.name}» почти закончился — хватит примерно на ${s.daysLeft} дн.`); });
-  state.savings.forEach(sv=>{ if(sv.goal){ const left = sv.goal-sv.current; if(left>0 && left<=30) w.push(`До цели копилки «${sv.name}» осталось всего ${fmtMoney(left)}.`); } });
-  return w.slice(0,4);
-}
-function quickActions(){
-  return `<div class="quickbar">
-    <button class="btn btn-primary" data-quick="expense">${icon('plus')} Добавить расход</button>
-    <button class="btn" data-quick="treatment">${icon('plus')} Добавить обработку</button>
-    <button class="btn" data-quick="vaccination">${icon('plus')} Добавить прививку</button>
-    <button class="btn" data-quick="document">${icon('plus')} Добавить документ</button>
-    <button class="btn" data-quick="pet">${icon('plus')} Новое животное</button>
-  </div>`;
-}
-function searchBox(){
-  return `<div class="search-box">${icon('search')}<input id="globalSearch" placeholder="Поиск животных, событий, документов..." /></div>`;
-}
-function petCardMini(p){
-  const nextItem = upcomingItems().find(i=>i.petId===p.id);
-  return `<div class="pet-card" data-open-pet="${p.id}">
-    <div class="pet-photo">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}
-      ${p.status==='передержка'?'<span class="status-chip">На передержке</span>':''}
-    </div>
-    <div class="pet-info">
-      <div class="name">${p.name}</div>
-      <div class="meta">${p.species}${p.breed?' · '+p.breed:''}${p.dob?' · '+ageStr(p.dob):''}</div>
-      <div class="stats-row"><span>Вес: <b>${p.weight||'—'} кг</b></span></div>
-      ${nextItem?`<div class="row-sub" style="margin-top:8px;">Ближайшее: ${nextItem.title.split(' — ')[0]}, ${fmtDate(nextItem.date)}</div>`:''}
-    </div>
-  </div>`;
-}
-function neuterLabel(p){
-  if(p.neutered==='да') return (p.sex==='Самец'?'Кастрирован':'Стерилизована')+(p.neuteredDate?' ('+fmtDate(p.neuteredDate)+')':'');
-  if(p.neutered==='нет') return p.sex==='Самец'?'Не кастрирован':'Не стерилизована';
-  return 'Неизвестно';
-}
-function speciesEmoji(sp){
-  const map={'Кошка':'🐈','Собака':'🐕','Кролик':'🐇','Птица':'🐦','Рыба':'🐟','Хомяк':'🐹','Черепаха':'🐢'};
-  return map[sp]||'🐾';
-}
-
-/* ============ PETS LIST ============ */
-function renderPetsList(){
-  return `
-  <div class="topbar">
-    <div><div class="page-title">Животные</div><div class="page-sub">${activePets().length} в системе</div></div>
-    <button class="btn btn-primary" data-quick="pet">${icon('plus')} Новое животное</button>
-  </div>
-  <div class="grid grid-cards">${activePets().map(petCardMini).join('')}</div>
-  ${modalHost()}
+    ${currentModal ? currentModal() : ''}
   `;
 }
 
-/* ============ PET DETAIL ============ */
-function renderPetDetail(){
-  const p = petById(route.petId);
-  if(!p) return `<div class="empty-note">Животное не найдено.</div>`;
-  const tabs = [['overview','Обзор'],['health','Здоровье'],['vet','Визиты к врачу'],['treatments','Обработки'],['vaccinations','Прививки'],['weight','Вес'],['documents','Документы'],['expenses','Расходы'],['history','История']];
-  return `
-  <div class="topbar">
-    <div>
-      <button class="btn btn-ghost btn-sm" data-nav="pets">← Все животные</button>
-      <div class="page-title" style="margin-top:6px;">${p.name}</div>
-      <div class="page-sub">${p.species}${p.breed?' · '+p.breed:''} · ${p.sex||''} · ${ageStr(p.dob)} ${p.status==='передержка'?' · <span class="pill pill-clay">На передержке</span>':''}</div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-sm" data-edit-pet="${p.id}">${icon('edit')} Редактировать</button>
-      <button class="btn btn-sm" data-print-pet="${p.id}">${icon('print')} Мед. карточка PDF</button>
-    </div>
-  </div>
-  <div class="tabbar">${tabs.map(([k,l])=>`<button class="tabbtn ${route.petTab===k?'active':''}" data-pet-tab="${k}">${l}</button>`).join('')}</div>
-  <div id="petTabContent">${renderPetTab(p)}</div>
-  ${modalHost()}
-  `;
-}
-function renderPetTab(p){
-  switch(route.petTab){
-    case 'overview': return petOverview(p);
-    case 'health': return petHealth(p);
-    case 'vet': return petVetVisits(p);
-    case 'treatments': return petTreatments(p);
-    case 'vaccinations': return petVaccinations(p);
-    case 'weight': return petWeight(p);
-    case 'documents': return petDocuments(p);
-    case 'expenses': return petExpenses(p);
-    case 'history': return petHistory(p);
-    default: return '';
-  }
-}
-function petOverview(p){
-  const up = upcomingItems().filter(i=>i.petId===p.id).slice(0,5);
-  const lastWeight = state.weightLogs.filter(w=>w.petId===p.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
-  return `
-  <div class="grid grid-2">
-    <div class="card">
-      <div class="card-title"><h3>Карточка</h3></div>
-      <div class="pet-photo" style="border-radius:10px;margin-bottom:12px;">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}</div>
-      <div class="two-col-stats">
-        <div><div class="stat-label">Дата рождения</div><div class="mono">${fmtDate(p.dob)} (${ageStr(p.dob)})</div></div>
-        <div><div class="stat-label">Пол</div><div>${p.sex||'—'}</div></div>
-        <div><div class="stat-label">Окрас</div><div>${p.color||'—'}</div></div>
-        <div><div class="stat-label">Текущий вес</div><div class="mono">${lastWeight?lastWeight.weight:p.weight||'—'} кг</div></div>
-        <div><div class="stat-label">${p.sex==='Самец'?'Кастрация':'Стерилизация'}</div><div>${neuterLabel(p)}</div></div>
-      </div>
-      ${p.traits?`<div style="margin-top:12px;"><div class="stat-label">Особенности</div><div>${p.traits}</div></div>`:''}
-      ${p.description?`<div style="margin-top:8px;"><div class="stat-label">Описание</div><div>${p.description}</div></div>`:''}
-    </div>
-    <div class="card">
-      <div class="card-title"><h3>Ближайшие события</h3></div>
-      ${up.length?up.map(it=>{ const d=daysBetween(todayISO(),it.date); return `<div class="list-row"><span class="dot ${typeDot(it.type)}"></span><div class="row-main"><div class="row-title">${it.title.split(' — ')[0]}</div><div class="row-sub">${fmtDate(it.date)}</div></div><div class="row-right">${d===0?'сегодня':d<0?'просрочено':'через '+d+' дн.'}</div></div>`; }).join(''):'<div class="empty-note">Нет запланированных событий.</div>'}
-    </div>
-  </div>`;
-}
-function petHealth(p){
-  const events = state.healthEvents.filter(h=>h.petId===p.id && !['обработка','вакцинация'].includes(h.type)).sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>Медицинская история</h2><button class="btn btn-sm btn-primary" data-quick="health" data-pet="${p.id}">${icon('plus')} Добавить запись</button></div>
-  <div class="card">
-    ${events.length? events.map(h=>healthRow(h)).join('') : `<div class="empty-note">Записей пока нет — лекарства, заболевания, операции, анализы, аллергии.</div>`}
-  </div>`;
-}
-function healthRow(h){
-  return `<div class="list-row">
-    <span class="dot dot-sky"></span>
-    <div class="row-main"><div class="row-title">${h.title} <span class="pill pill-sky">${h.type}</span></div>
-      <div class="row-sub">${fmtDate(h.date)}${h.description?' · '+h.description:''}${h.comment?' · '+h.comment:''}</div></div>
-    <div class="row-right">${h.nextDate?'след.: '+fmtDate(h.nextDate):''}</div>
-    ${h.nextDate?`<button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить выполненным — срок продлится">${icon('check')}</button>`:''}
-    <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
-  </div>`;
-}
-function petVetVisits(p){
-  const visits = state.vetVisits.filter(v=>v.petId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>Визиты к ветеринару</h2><button class="btn btn-sm btn-primary" data-quick="vet" data-pet="${p.id}">${icon('plus')} Добавить визит</button></div>
-  <div class="card">
-    ${visits.length? visits.map(v=>`<div class="list-row">
-      <span class="dot dot-sky"></span>
-      <div class="row-main"><div class="row-title">${v.reason||'Визит'}</div>
-        <div class="row-sub">${fmtDate(v.date)} · ${v.clinic||''} ${v.diagnosis?'· Диагноз: '+v.diagnosis:''}${v.recommendations?' · Рекомендации: '+v.recommendations:''}</div></div>
-      <div class="row-right">${v.cost?fmtMoney(v.cost):''}</div>
-      <button class="icon-btn" data-del-vet="${v.id}">${icon('trash')}</button>
-    </div>`).join('') : `<div class="empty-note">Визитов пока нет.</div>`}
-  </div>`;
-}
-function petTreatments(p){
-  const list = state.healthEvents.filter(h=>h.petId===p.id && h.type==='обработка').sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>Обработки от паразитов</h2><button class="btn btn-sm btn-primary" data-quick="treatment" data-pet="${p.id}">${icon('plus')} Добавить обработку</button></div>
-  <div class="card">
-    ${list.length? list.map(h=>treatmentRow(h)).join('') : `<div class="empty-note">Обработок пока нет.</div>`}
-  </div>`;
-}
-function treatmentRow(h){
-  const p = petById(h.petId);
-  const overdue = h.nextDate && h.nextDate < todayISO();
-  return `<div class="list-row">
-      <span class="dot dot-clay"></span>
-      <div class="row-main"><div class="row-title">${h.title||'Обработка'} <span class="pill pill-clay">${h.subtype||'обработка'}</span>${p?` <span class="pill pill-moss">${p.name}</span>`:''}${h.completedCount?` <span class="pill pill-sky">✓ ×${h.completedCount}</span>`:''}</div>
-        <div class="row-sub">Дата: ${fmtDate(h.date)} · Срок действия: ${h.validDays||'—'} дн.${h.brand?' · Производитель: '+h.brand:''}${h.comment?' · '+h.comment:''}</div></div>
-      <div class="row-right" style="${overdue?'color:var(--red);':''}">след.: ${fmtDate(h.nextDate)}</div>
-      <button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить сделанной — продлит срок на ${h.validDays||30} дн.">${icon('check')}</button>
-      <button class="icon-btn" data-skip-health="${h.id}" title="Пропустить (без отметки о выполнении)">${icon('skip')}</button>
-      <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
-    </div>`;
-}
-function petVaccinations(p){
-  const list = state.healthEvents.filter(h=>h.petId===p.id && h.type==='вакцинация').sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>Прививки</h2><button class="btn btn-sm btn-primary" data-quick="vaccination" data-pet="${p.id}">${icon('plus')} Добавить прививку</button></div>
-  <div class="card">
-    ${list.length? list.map(h=>vaccinationRow(h)).join('') : `<div class="empty-note">Прививок пока нет.</div>`}
-  </div>`;
-}
-function vaccinationRow(h){
-  const p = petById(h.petId);
-  const overdue = h.nextDate && h.nextDate < todayISO();
-  return `<div class="list-row">
-      <span class="dot dot-moss"></span>
-      <div class="row-main"><div class="row-title">${h.title} ${h.group?`<span class="pill pill-purple">${h.group}</span>`:''}${p?` <span class="pill pill-moss">${p.name}</span>`:''}${h.completedCount?` <span class="pill pill-sky">✓ ×${h.completedCount}</span>`:''}</div>
-        <div class="row-sub">Дата: ${fmtDate(h.date)}${h.vet?' · '+h.vet:''}${h.comment?' · '+h.comment:''}</div></div>
-      <div class="row-right" style="${overdue?'color:var(--red);':''}">след.: ${fmtDate(h.nextDate)}</div>
-      ${h.nextDate?`<button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить сделанной — продлит срок на ${h.validDays||365} дн.">${icon('check')}</button>`:''}
-      <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
-    </div>`;
-}
-
-/* ---- weight tab ---- */
-function petWeight(p){
-  const logs = state.weightLogs.filter(w=>w.petId===p.id).sort((a,b)=>a.date.localeCompare(b.date));
-  const last = logs[logs.length-1];
-  const prev = logs[logs.length-2];
-  const change = (last && prev) ? +(last.weight-prev.weight).toFixed(2) : null;
-  const changePct = (last && prev && prev.weight) ? +((last.weight-prev.weight)/prev.weight*100).toFixed(1) : null;
-  const range = p.weightRange || {min:null,max:null};
-  const outOfRange = last && range.min!=null && (last.weight<range.min || last.weight>range.max);
-
-  return `
-  <div class="section-head"><h2>Отслеживание веса</h2><button class="btn btn-sm btn-primary" data-quick="weight" data-pet="${p.id}">${icon('plus')} Новое измерение</button></div>
-
-  ${outOfRange?`<div class="warn-banner">${icon('bell')}<div>Текущий вес (${last.weight} кг) выходит за установленный диапазон ${range.min}–${range.max} кг.</div></div>`:''}
-  ${(change!==null && Math.abs(changePct)>=8)?`<div class="warn-banner">${icon('bell')}<div>Вес изменился на ${Math.abs(changePct)}% с последнего измерения — обратите внимание на динамику.</div></div>`:''}
-
-  <div class="grid grid-2">
-    <div class="card">
-      <div class="card-title"><h3>Текущий вес</h3>
-        <button class="btn btn-sm" data-set-range="${p.id}">${icon('scale')} Целевой диапазон</button>
-      </div>
-      <div class="stat-big">${last?last.weight:p.weight||'—'} кг</div>
-      ${change!==null?`<div class="stat-label" style="margin-top:4px;">${change>0?'+':''}${change} кг (${changePct>0?'+':''}${changePct}%) с прошлого измерения</div>`:''}
-      ${range.min!=null?`<div class="row-sub" style="margin-top:8px;">Оптимальный диапазон: <span class="mono">${range.min}–${range.max} кг</span></div>`:''}
-      <div class="section-head" style="margin-top:16px;"><h3 style="font-size:13px;">Периоды</h3></div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="weightPeriodBar">
-        ${['1м','3м','6м','1г','всё'].map((l,i)=>`<button class="btn btn-sm ${i===4?'btn-primary':''}" data-weight-period="${l}" data-pet-w="${p.id}">${l}</button>`).join('')}
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><h3>Динамика</h3></div>
-      ${weightDynamicsHTML(logs)}
-    </div>
-  </div>
-
-  <div class="section-block" style="margin-top:16px;">
-    <div class="card">
-      <div class="card-title"><h3>График изменения веса</h3></div>
-      <canvas id="weightChart" height="90"></canvas>
-    </div>
-  </div>
-
-  <div class="section-block">
-    <div class="card">
-      <div class="card-title"><h3>История измерений</h3></div>
-      ${logs.length? logs.slice().reverse().map(w=>`<div class="list-row">
-        <span class="dot dot-moss"></span>
-        <div class="row-main"><div class="row-title mono">${w.weight} кг</div><div class="row-sub">${fmtDate(w.date)}${w.comment?' · '+w.comment:''}</div></div>
-        <button class="icon-btn" data-edit-weight="${w.id}">${icon('edit')}</button>
-        <button class="icon-btn" data-del-weight="${w.id}">${icon('trash')}</button>
-      </div>`).join('') : `<div class="empty-note">Измерений пока нет.</div>`}
-    </div>
-  </div>
-  `;
-}
-function weightDynamicsHTML(logs){
-  if(logs.length<2) return `<div class="empty-note">Недостаточно данных для анализа динамики.</div>`;
-  const weights = logs.map(l=>l.weight);
-  const min = Math.min(...weights), max = Math.max(...weights);
-  const avg = +(weights.reduce((a,b)=>a+b,0)/weights.length).toFixed(2);
-  const last30 = logs.filter(l=> daysBetween(l.date, todayISO())<=30);
-  let dyn30 = '';
-  if(last30.length>=2){
-    const d = +(last30[last30.length-1].weight-last30[0].weight).toFixed(2);
-    dyn30 = `Вес ${d>=0?'увеличился':'снизился'} на ${Math.abs(d)} кг за последние 30 дней.`;
-  }
-  return `
-  <div class="two-col-stats">
-    <div><div class="stat-label">Минимум</div><div class="mono">${min} кг</div></div>
-    <div><div class="stat-label">Максимум</div><div class="mono">${max} кг</div></div>
-    <div><div class="stat-label">Среднее</div><div class="mono">${avg} кг</div></div>
-    <div><div class="stat-label">Измерений</div><div class="mono">${logs.length}</div></div>
-  </div>
-  ${dyn30?`<div class="row-sub" style="margin-top:10px;">${dyn30}</div>`:''}
-  <div class="row-sub" style="margin-top:4px;color:var(--ink-soft);font-style:italic;">Это инструмент отслеживания динамики, не медицинский диагноз.</div>
-  `;
-}
-let weightChartInstance=null;
-function drawWeightChart(petId, period='всё'){
-  const canvas = document.getElementById('weightChart');
-  if(!canvas || typeof Chart==='undefined') return;
-  let logs = state.weightLogs.filter(w=>w.petId===petId).sort((a,b)=>a.date.localeCompare(b.date));
-  const days = {'1м':30,'3м':90,'6м':180,'1г':365,'всё':100000}[period]||100000;
-  const cutoff = addDays(todayISO(), -days);
-  logs = logs.filter(l=>l.date>=cutoff);
-  if(weightChartInstance) weightChartInstance.destroy();
-  weightChartInstance = new Chart(canvas.getContext('2d'),{
-    type:'line',
-    data:{labels:logs.map(l=>fmtDate(l.date)), datasets:[{
-      label:'Вес (кг)', data:logs.map(l=>l.weight),
-      borderColor:'#4B6B4A', backgroundColor:'rgba(75,107,74,0.12)', fill:true, tension:.3,
-      pointBackgroundColor:'#4B6B4A', pointRadius:4, pointHoverRadius:6
-    }]},
-    options:{
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=> ctx.parsed.y+' кг'}}},
-      scales:{y:{ticks:{font:{family:'IBM Plex Mono'}}}, x:{ticks:{font:{family:'IBM Plex Mono'},maxRotation:0}}}
-    }
-  });
-}
-
-function petDocuments(p){
-  const docs = state.documents.filter(d=>d.petId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>Документы</h2><button class="btn btn-sm btn-primary" data-quick="document" data-pet="${p.id}">${icon('plus')} Добавить документ</button></div>
-  <div class="card">
-    ${docs.length? docs.map(d=>`<div class="list-row">
-      ${icon('file')}
-      <div class="row-main"><div class="row-title">${d.name} <span class="pill pill-gold">${d.type}</span></div><div class="row-sub">${fmtDate(d.date)}${d.note?' · '+d.note:''}</div></div>
-      <button class="icon-btn" data-del-doc="${d.id}">${icon('trash')}</button>
-    </div>`).join('') : `<div class="empty-note">Документов пока нет. Можно сохранять названия файлов, анализов, заключений и чеков.</div>`}
-  </div>`;
-}
-function petExpenses(p){
-  const exps = state.expenses.filter(e=>e.petId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
-  const total = exps.reduce((s,e)=>s+Number(e.amount),0);
-  return `
-  <div class="section-head"><h2>Расходы</h2><button class="btn btn-sm btn-primary" data-quick="expense" data-pet="${p.id}">${icon('plus')} Добавить расход</button></div>
-  <div class="card" style="margin-bottom:14px;"><div class="stat-label">Всего потрачено</div><div class="stat-big">${fmtMoney(total)}</div></div>
-  <div class="card">
-    ${exps.length? exps.map(e=>`<div class="list-row">
-      <span class="dot dot-gold"></span>
-      <div class="row-main"><div class="row-title">${e.category} <span class="pill pill-moss">${e.category}</span></div><div class="row-sub">${fmtDate(e.date)}${e.comment?' · '+e.comment:''}</div></div>
-      <div class="row-right">${fmtMoney(e.amount)}</div>
-      <button class="icon-btn" data-del-expense="${e.id}">${icon('trash')}</button>
-    </div>`).join('') : `<div class="empty-note">Расходов пока нет.</div>`}
-  </div>`;
-}
-function petHistory(p){
-  const items = [];
-  state.healthEvents.filter(h=>h.petId===p.id).forEach(h=>items.push({date:h.date,title:h.title,sub:h.type}));
-  state.vetVisits.filter(v=>v.petId===p.id).forEach(v=>items.push({date:v.date,title:'Визит к ветеринару',sub:v.reason}));
-  state.expenses.filter(e=>e.petId===p.id).forEach(e=>items.push({date:e.date,title:'Покупка: '+e.category,sub:fmtMoney(e.amount)}));
-  state.weightLogs.filter(w=>w.petId===p.id).forEach(w=>items.push({date:w.date,title:'Измерение веса',sub:w.weight+' кг'}));
-  state.documents.filter(d=>d.petId===p.id).forEach(d=>items.push({date:d.date,title:'Документ: '+d.name,sub:d.type}));
-  items.sort((a,b)=>b.date.localeCompare(a.date));
-  return `
-  <div class="section-head"><h2>История</h2></div>
-  <div class="card">
-    <div class="timeline">
-      ${items.length? items.map(it=>`<div class="tl-item"><div class="tl-date">${fmtDate(it.date)}</div><div class="tl-title">${it.title}</div><div class="tl-sub">${it.sub||''}</div></div>`).join('') : `<div class="empty-note">Пока нет событий в истории.</div>`}
-    </div>
-  </div>`;
-}
-
-/* ============ VACCINATIONS (global page) ============ */
+/* VACCINATIONS PAGE */
 function renderVaccinationsPage(){
-  const list = state.healthEvents.filter(h=>h.type==='вакцинация').sort((a,b)=>(a.nextDate||a.date).localeCompare(b.nextDate||b.date));
-  const groups = ['Все', ...Array.from(new Set(list.map(h=>h.group).filter(Boolean)))];
+  const list = state.healthEvents.filter(h => h.type === 'вакцинация');
+  const activeList = list.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
+  const historyList = list.filter(h => h.status === 'archived').sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
   return `
   <div class="topbar">
-    <div><div class="page-title">Прививки</div><div class="page-sub">Все животные · что, когда и когда следующая</div></div>
-    <button class="btn btn-primary" data-quick="vaccination">${icon('plus')} Добавить прививку</button>
+    <div><div class="page-title">Прививки</div><div class="page-sub">Управление вакцинацией и история</div></div>
+    <button class="btn btn-primary" onclick="openHealthModal(null, 'vaccination')">${icon('plus')} Добавить прививку</button>
   </div>
   <div class="card">
-    ${list.length? list.map(h=>vaccinationRow(h)).join('') : `<div class="empty-note">Прививок пока не введено. Добавляйте их вручную по каждому животному.</div>`}
+    <h3 style="font-size:15px; margin-bottom:12px;">Активные прививки</h3>
+    ${activeList.length ? activeList.map(h => vaccinationRow(h)).join('') : `<div class="empty-note">Активных прививок не найдено.</div>`}
   </div>
-  ${modalHost()}
+  ${historyList.length ? `
+  <div class="card" style="margin-top:20px; opacity:0.85;">
+    <h3 style="font-size:15px; margin-bottom:12px; color:var(--ink-soft);">История сделанных прививок</h3>
+    ${historyList.map(h => vaccinationRow(h, true)).join('')}
+  </div>` : ''}
   `;
 }
 
-/* ============ TREATMENTS (global page) ============ */
+function vaccinationRow(h, isHistory = false){
+  const pet = state.pets.find(p => p.id === h.petId);
+  const overdue = !isHistory && h.nextDate && h.nextDate < todayISO();
+  return `
+  <div class="list-row">
+    <span class="dot ${isHistory ? 'dot-sky' : 'dot-moss'}"></span>
+    <div class="row-main">
+      <div class="row-title">
+        ${h.title} ${h.group ? `<span class="pill pill-purple">${h.group}</span>` : ''}
+        ${pet ? `<span class="pill pill-moss">${pet.name}</span>` : ''}
+        ${isHistory ? `<span class="pill pill-sky">Архив/Сделано</span>` : ''}
+      </div>
+      <div class="row-sub">Сделано: ${fmtDate(h.date)}${h.vet ? ' · ' + h.vet : ''}${h.comment ? ' · ' + h.comment : ''}</div>
+    </div>
+    <div class="row-right" style="${overdue ? 'color:var(--red);font-weight:600;' : ''}">
+      ${isHistory ? '' : 'Следующая: ' + fmtDate(h.nextDate)}
+    </div>
+    ${!isHistory ? `
+      <button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>
+    ` : ''}
+    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'vaccination')" title="Редактировать">${icon('edit')}</button>
+    <button class="icon-btn" onclick="deleteHealth('${h.id}')" title="Удалить">${icon('trash')}</button>
+  </div>`;
+}
+
+/* TREATMENTS PAGE */
 function renderTreatmentsPage(){
-  const list = state.healthEvents.filter(h=>h.type==='обработка').sort((a,b)=>(a.nextDate||a.date).localeCompare(b.nextDate||b.date));
+  const list = state.healthEvents.filter(h => h.type === 'обработка');
+  const activeList = list.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
+  const historyList = list.filter(h => h.status === 'archived').sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
   return `
   <div class="topbar">
-    <div><div class="page-title">Обработки от паразитов</div><div class="page-sub">Блохи, клещи, глисты, москиты — по каждому животному</div></div>
-    <button class="btn btn-primary" data-quick="treatment">${icon('plus')} Добавить обработку</button>
+    <div><div class="page-title">Обработки от паразитов</div><div class="page-sub">Блохи, клещи, глисты и т.д.</div></div>
+    <button class="btn btn-primary" onclick="openHealthModal(null, 'treatment')">${icon('plus')} Добавить обработку</button>
   </div>
   <div class="card">
-    ${list.length? list.map(h=>treatmentRow(h)).join('') : `<div class="empty-note">Обработок пока не введено.</div>`}
+    <h3 style="font-size:15px; margin-bottom:12px;">Активные обработки</h3>
+    ${activeList.length ? activeList.map(h => treatmentRow(h)).join('') : `<div class="empty-note">Активных обработок не найдено.</div>`}
   </div>
-  ${modalHost()}
+  ${historyList.length ? `
+  <div class="card" style="margin-top:20px; opacity:0.85;">
+    <h3 style="font-size:15px; margin-bottom:12px; color:var(--ink-soft);">История обработок</h3>
+    ${historyList.map(h => treatmentRow(h, true)).join('')}
+  </div>` : ''}
   `;
 }
 
-/* ============ CALENDAR ============ */
-let calCursor = new Date();
-function renderCalendar(){
-  const y = calCursor.getFullYear(), m = calCursor.getMonth();
-  const first = new Date(y,m,1);
-  const startOffset = (first.getDay()+6)%7; // Monday first
-  const daysInMonth = new Date(y,m+1,0).getDate();
-  const cells = [];
-  for(let i=0;i<startOffset;i++) cells.push(null);
-  for(let d=1;d<=daysInMonth;d++) cells.push(d);
-  while(cells.length%7!==0) cells.push(null);
-
-  const monthEvents = {};
-  state.events.forEach(e=>{
-    if(!monthEvents[e.date]) monthEvents[e.date]=[];
-    monthEvents[e.date].push(e);
-  });
-  state.healthEvents.forEach(h=>{ if(h.nextDate){ if(!monthEvents[h.nextDate]) monthEvents[h.nextDate]=[]; monthEvents[h.nextDate].push({title:h.title,type:h.type,petId:h.petId}); }});
-  state.vetVisits.forEach(v=>{ if(!monthEvents[v.date]) monthEvents[v.date]=[]; monthEvents[v.date].push({title:'Визит: '+(petById(v.petId)?.name||''),type:'ветеринар',petId:v.petId}); });
-  activePets().forEach(p=>{
-    if(!p.dob) return;
-    const bd = new Date(p.dob+'T00:00:00');
-    if(isNaN(bd) || bd.getMonth()!==m) return;
-    const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(bd.getDate()).padStart(2,'0')}`;
-    if(!monthEvents[iso]) monthEvents[iso]=[];
-    monthEvents[iso].push({title:'🎂 День рождения — '+p.name, type:'день_рождения', petId:p.id});
-  });
-
-  const monthLabel = calCursor.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
-  const dows = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-
+function treatmentRow(h, isHistory = false){
+  const pet = state.pets.find(p => p.id === h.petId);
+  const overdue = !isHistory && h.nextDate && h.nextDate < todayISO();
   return `
-  <div class="topbar">
-    <div><div class="page-title">Календарь</div><div class="page-sub">Все события, связанные с животными, включая дни рождения</div></div>
-    <button class="btn btn-primary" data-quick="calevent">${icon('plus')} Добавить событие</button>
-  </div>
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <button class="btn btn-sm" id="calPrev">←</button>
-      <h3 style="text-transform:capitalize;">${monthLabel}</h3>
-      <button class="btn btn-sm" id="calNext">→</button>
-    </div>
-    <div class="cal-grid">
-      ${dows.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
-      ${cells.map(d=>{
-        if(!d) return `<div class="cal-day other"></div>`;
-        const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const evs = monthEvents[iso]||[];
-        const isToday = iso===todayISO();
-        return `<div class="cal-day ${isToday?'today':''}" data-cal-day="${iso}">
-          <div class="num">${d}</div>
-          ${evs.slice(0,2).map(e=>`<div class="cal-evt" style="background:${typeColor(e.type)}22;color:${typeColor(e.type)};">${e.title.split(' — ')[0]}</div>`).join('')}
-          ${evs.length>2?`<div class="row-sub">+${evs.length-2} ещё</div>`:''}
-        </div>`;
-      }).join('')}
-    </div>
-  </div>
-  ${modalHost()}
-  `;
-}
-function typeColor(t){
-  return {'обработка':'#B5592E','вакцинация':'#4B6B4A','ветеринар':'#3E6B7C','день_рождения':'#7A5AA8','другое':'#B9872B'}[t]||'#B9872B';
-}
-
-/* ============ REMINDERS ============ */
-function renderReminders(){
-  const items = upcomingItems();
-  const offsets = state.reminderSettings.offsets;
-  return `
-  <div class="topbar">
-    <div><div class="page-title">Напоминания</div><div class="page-sub">Настраиваемые сроки уведомлений</div></div>
-    <button class="btn" data-quick="reminderSettings">${icon('settings')} Настроить сроки</button>
-  </div>
-  <div class="card" style="margin-bottom:16px;">
-    <div class="row-sub">Текущие сроки уведомлений: ${offsets.map(o=>`<span class="pill pill-sky" style="margin-right:4px;">${o} дн.</span>`).join('')}</div>
-  </div>
-  <div class="section-block">
-    <div class="card">
-      <div class="card-title"><h3>В ближайшие 7 дней</h3></div>
-      ${items.filter(i=>{const d=daysBetween(todayISO(),i.date); return d>=0 && d<=7;}).map(reminderRow).join('') || '<div class="empty-note">Ничего срочного.</div>'}
-    </div>
-  </div>
-  <div class="section-block">
-    <div class="card">
-      <div class="card-title"><h3>Все предстоящие</h3></div>
-      ${items.filter(i=>daysBetween(todayISO(),i.date)>=0).map(reminderRow).join('') || '<div class="empty-note">Нет предстоящих событий.</div>'}
-    </div>
-  </div>
-  ${modalHost()}
-  `;
-}
-function reminderRow(it){
-  const d = daysBetween(todayISO(), it.date);
-  return `<div class="list-row">
-    <span class="dot ${urgencyDot(d)}"></span>
-    <div class="row-main"><div class="row-title">${it.title}</div><div class="row-sub">${fmtDate(it.date)} · ${d===0?'сегодня':d===1?'завтра':'через '+d+' дн.'}</div></div>
-    ${it.source==='event'?`<button class="icon-btn" data-done-event="${it.id}" title="Отметить выполненным">✓</button>`:''}
-    ${it.source==='health'?`<button class="icon-btn complete-btn" data-complete-health="${it.id}" title="Отметить выполненным — срок продлится">${icon('check')}</button>`:''}
-  </div>`;
-}
-
-/* ============ SUPPLIES ============ */
-function renderSupplies(){
-  const list = lowSupplies();
-  return `
-  <div class="topbar">
-    <div><div class="page-title">Запасы</div><div class="page-sub">Корм, наполнитель, лекарства и другие расходники</div></div>
-    <button class="btn btn-primary" data-quick="supply">${icon('plus')} Добавить товар</button>
-  </div>
-  <div class="grid grid-cards">
-    ${list.map(s=>`<div class="card">
-      <div class="card-title"><h3>${s.name}</h3><span class="pill ${s.daysLeft<=7?'pill-red':s.daysLeft<=14?'pill-gold':'pill-moss'}">${s.daysLeft<999? s.daysLeft+' дн.':'—'}</span></div>
-      <div class="row-sub" style="margin-bottom:6px;">${supplyTargetLabel(s.petId)}</div>
-      <div class="stat-big">${s.currentStock} <span style="font-size:14px;">${s.unit}</span></div>
-      <div class="stat-label">Средний расход: ${s.avgConsumption} ${s.unit}/день</div>
-      <div class="row-sub" style="margin-top:8px;">Последняя покупка: ${fmtDate(s.lastPurchaseDate)} · ${s.lastPurchaseQty} ${s.unit} за ${fmtMoney(s.lastPurchaseCost||0)}</div>
-      <div style="display:flex;gap:6px;margin-top:12px;">
-        <button class="btn btn-sm" data-restock="${s.id}">${icon('plus')} Купили</button>
-        <button class="icon-btn" data-del-supply="${s.id}">${icon('trash')}</button>
+  <div class="list-row">
+    <span class="dot ${isHistory ? 'dot-sky' : 'dot-clay'}"></span>
+    <div class="row-main">
+      <div class="row-title">
+        ${h.title || 'Обработка'} <span class="pill pill-clay">${h.subtype || 'обработка'}</span>
+        ${pet ? `<span class="pill pill-moss">${pet.name}</span>` : ''}
+        ${isHistory ? `<span class="pill pill-sky">Архив/Сделано</span>` : ''}
       </div>
-    </div>`).join('')}
-  </div>
-  ${modalHost()}
-  `;
-}
-
-/* ============ EXPENSES ============ */
-function renderExpenses(){
-  const today = periodExpenses(0), week = periodExpenses(7), month = periodExpenses(30), year = periodExpenses(365);
-  const sum = arr=>arr.reduce((s,e)=>s+Number(e.amount),0);
-  const byCat = {};
-  state.expenses.forEach(e=>{ byCat[e.category]=(byCat[e.category]||0)+Number(e.amount); });
-  const byPet = {};
-  state.expenses.forEach(e=>{ const n=petById(e.petId)?.name||'Общее'; byPet[n]=(byPet[n]||0)+Number(e.amount); });
-
-  return `
-  <div class="topbar">
-    <div><div class="page-title">Расходы на животных</div><div class="page-sub">Все траты по категориям и животным</div></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn" id="exportCsv">${icon('file')} Экспорт CSV</button>
-      <button class="btn btn-primary" data-quick="expense">${icon('plus')} Добавить расход</button>
+      <div class="row-sub">Сделано: ${fmtDate(h.date)} · Срок: ${h.validDays || 30} дн.${h.brand ? ' · ' + h.brand : ''}${h.comment ? ' · ' + h.comment : ''}</div>
     </div>
-  </div>
-  <div class="grid grid-3" style="margin-bottom:16px;">
-    <div class="card"><div class="stat-label">Сегодня</div><div class="stat-big">${fmtMoney(sum(today.filter(e=>e.date===todayISO())))}</div></div>
-    <div class="card"><div class="stat-label">За неделю</div><div class="stat-big">${fmtMoney(sum(week))}</div></div>
-    <div class="card"><div class="stat-label">За ${monthNameRu().toLowerCase()} (текущий месяц)</div><div class="stat-big">${fmtMoney(monthExpenses())}</div></div>
-  </div>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title"><h3>По категориям</h3></div><canvas id="catChart" height="200"></canvas></div>
-    <div class="card"><div class="card-title"><h3>По животным</h3></div><canvas id="petChart" height="200"></canvas></div>
-  </div>
-  <div class="section-block" style="margin-top:16px;">
-    <div class="card">
-      <div class="card-title"><h3>История расходов</h3></div>
-      ${state.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>`<div class="list-row">
-        <span class="dot dot-gold"></span>
-        <div class="row-main"><div class="row-title">${e.category}${e.petId&&petById(e.petId)?' · '+petById(e.petId).name:''}</div><div class="row-sub">${fmtDate(e.date)}${e.comment?' · '+e.comment:''}</div></div>
-        <div class="row-right">${fmtMoney(e.amount)}</div>
-        <button class="icon-btn" data-del-expense="${e.id}">${icon('trash')}</button>
-      </div>`).join('') || `<div class="empty-note">Расходов пока нет.</div>`}
+    <div class="row-right" style="${overdue ? 'color:var(--red);font-weight:600;' : ''}">
+      ${isHistory ? '' : 'Следующая: ' + fmtDate(h.nextDate)}
     </div>
-  </div>
-  ${modalHost()}
-  `;
-}
-let catChartInst=null, petChartInst=null;
-function drawExpenseCharts(){
-  const byCat={}; state.expenses.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+Number(e.amount));
-  const byPet={}; state.expenses.forEach(e=>{ const n=petById(e.petId)?.name||'Общее'; byPet[n]=(byPet[n]||0)+Number(e.amount);});
-  const palette=['#4B6B4A','#B5592E','#B9872B','#3E6B7C','#A5433A','#6E8F6D','#C98B5C'];
-  const c1=document.getElementById('catChart'), c2=document.getElementById('petChart');
-  if(c1 && typeof Chart!=='undefined'){
-    if(catChartInst) catChartInst.destroy();
-    catChartInst = new Chart(c1.getContext('2d'),{type:'doughnut',data:{labels:Object.keys(byCat),datasets:[{data:Object.values(byCat),backgroundColor:palette}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}});
-  }
-  if(c2 && typeof Chart!=='undefined'){
-    if(petChartInst) petChartInst.destroy();
-    petChartInst = new Chart(c2.getContext('2d'),{type:'bar',data:{labels:Object.keys(byPet),datasets:[{data:Object.values(byPet),backgroundColor:'#4B6B4A',borderRadius:6}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{font:{family:'IBM Plex Mono'}}}}}});
-  }
-}
-
-/* ============ SAVINGS ============ */
-function renderSavings(){
-  return `
-  <div class="topbar">
-    <div><div class="page-title">Копилки для животных</div><div class="page-sub">Цели накоплений и прогресс · синхронизировано с фондом животных из бюджета</div></div>
-    <button class="btn btn-primary" data-quick="savingsGoal">${icon('plus')} Новая копилка</button>
-  </div>
-  <div class="grid grid-cards">
-    ${state.savings.length? state.savings.map(s=>{
-      const hasGoal = s.goal!=null && s.goal>0;
-      const pct = hasGoal? Math.min(100, Math.round(s.current/s.goal*100)) : null;
-      const left = hasGoal? Math.max(0, s.goal-s.current) : null;
-      return `<div class="card">
-        <div class="card-title"><h3>${s.emoji?s.emoji+' ':''}${s.name}</h3>${hasGoal?`<span class="pill pill-gold">${pct}%</span>`:''}</div>
-        <div class="stat-big">${fmtMoney(s.current)} ${hasGoal?`<span style="font-size:13px;color:var(--ink-soft);">/ ${fmtMoney(s.goal)}</span>`:''}</div>
-        ${hasGoal?`<div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:var(--gold);"></div></div>`:''}
-        <div class="row-sub" style="margin-top:8px;">${hasGoal?'Осталось: '+fmtMoney(left)+' · ':''}Ежемесячно: ${fmtMoney(s.monthly)}</div>
-        <div class="row-sub">${s.cycleDays?'Цикл покупки: раз в '+s.cycleDays+' дн. · ':''}${s.lastPurchaseDate?'Последняя покупка: '+fmtDate(s.lastPurchaseDate):''}</div>
-        <div style="display:flex;gap:6px;margin-top:12px;">
-          <button class="btn btn-sm btn-primary" data-fund="${s.id}">${icon('plus')} Пополнить</button>
-          <button class="icon-btn" data-del-saving="${s.id}">${icon('trash')}</button>
-        </div>
-      </div>`;
-    }).join('') : `<div class="empty-note">Копилок пока нет — создайте новую или дождитесь синхронизации с бюджетным приложением.</div>`}
-  </div>
-  ${modalHost()}
-  `;
-}
-
-/* ============ ARCHIVE ============ */
-function renderArchive(){
-  const archived = state.pets.filter(p=>state.archive.includes(p.id));
-  return `
-  <div class="topbar"><div><div class="page-title">Архив</div><div class="page-sub">Животные, которые больше не находятся дома</div></div></div>
-  <div class="grid grid-cards">
-    ${archived.length? archived.map(p=>`<div class="pet-card">
-      <div class="pet-photo">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}</div>
-      <div class="pet-info"><div class="name">${p.name}</div><div class="meta">${p.species}${p.breed?' · '+p.breed:''}</div>
-      <div style="display:flex;gap:6px;margin-top:8px;">
-        <button class="btn btn-sm" data-unarchive="${p.id}">Вернуть</button>
-        <button class="btn btn-sm btn-danger" data-delete-pet="${p.id}">${icon('trash')} Удалить навсегда</button>
-      </div></div>
-    </div>`).join('') : `<div class="empty-note">Архив пуст.</div>`}
+    ${!isHistory ? `
+      <button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>
+    ` : ''}
+    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'treatment')" title="Редактировать">${icon('edit')}</button>
+    <button class="icon-btn" onclick="deleteHealth('${h.id}')" title="Удалить">${icon('trash')}</button>
   </div>`;
 }
 
-/* ============ SETTINGS ============ */
-function renderSettings(){
-  return `
-  <div class="topbar"><div><div class="page-title">Настройки</div><div class="page-sub">Семейный доступ и интеграция</div></div></div>
-  <div class="grid grid-2">
-    <div class="card">
-      <div class="card-title"><h3>Семейный доступ</h3></div>
-      <div class="row-sub">Оба пользователя работают в одной общей базе данных — Кристина и Диана. Все изменения (расходы, события, документы, копилки) видны обоим сразу.</div>
-    </div>
-    <div class="card">
-      <div class="card-title"><h3>Интеграция с бюджетным приложением «Наш Бюджет»</h3></div>
-      <div class="row-sub">Расходы категории «Животные» и копилки фонда животных подтягиваются сюда напрямую из общей базы данных в реальном времени.</div>
-    </div>
-    <div class="card">
-      <div class="card-title"><h3>Резервное копирование</h3></div>
-      <button class="btn" id="backupBtn">${icon('file')} Скачать резервную копию (JSON)</button>
-    </div>
-  </div>`;
-}
+/* DIALOG: COMPLETE ACTION (Сделано -> Продлить ИЛИ Новый препарат) */
+function openCompleteDialog(id){
+  const item = state.healthEvents.find(h => h.id === id);
+  if(!item) return;
 
-/* ============ MODALS ============ */
-let currentModal = null;
-function modalHost(){ return currentModal ? currentModal() : ''; }
-function openModal(fn){ currentModal = fn; render(); afterModalOpen(); }
-function closeModal(){ currentModal = null; render(); }
+  currentModal = () => `
+  <div class="overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <h3>Отметить выполнение: ${item.title}</h3>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:-10px; margin-bottom:16px;">
+        Выберите, как поступить с повторной обработкой/прививкой:
+      </p>
 
-function afterModalOpen(){
-  const overlay = document.querySelector('.overlay');
-  if(overlay) overlay.onclick = (e)=>{ if(e.target===overlay) closeModal(); };
-  bindModalFieldEvents();
-}
-
-function fieldsPetSelect(selected){
-  return `<select name="petId">${activePets().map(p=>`<option value="${p.id}" ${selected===p.id?'selected':''}>${p.name}</option>`).join('')}</select>`;
-}
-
-function modalPetForm(pet){
-  const editing = !!pet; pet = pet||{};
-  return ()=>`<div class="overlay"><div class="modal">
-    <h3>${editing?'Редактировать животное':'Новое животное'}</h3>
-    <form id="mform">
-      <div class="field">
-        <label>Фото</label>
-        <div class="photo-pick">
-          <img class="preview" id="petPhotoPreview" src="${pet.photo||''}" style="${pet.photo?'':'display:none;'}"/>
-          <input type="file" name="photoFile" accept="image/*" id="petPhotoInput">
-        </div>
+      <div class="action-card-option" onclick="processCompleteOption('${id}', 'extend')">
+        <h4>1. Продлить этим же препаратом («${item.title}»)</h4>
+        <p>Текущая запись отправится в историю с сегодняшней датой, а для «${item.title}» отсчитается новый срок (+${item.validDays||30} дней).</p>
       </div>
-      <div class="field-row"><div class="field"><label>Имя</label><input name="name" value="${pet.name||''}" required></div>
-      <div class="field"><label>Вид</label><input name="species" value="${pet.species||''}" placeholder="Кошка, собака..." required></div></div>
-      <div class="field-row"><div class="field"><label>Порода</label><input name="breed" value="${pet.breed||''}"></div>
-      <div class="field"><label>Пол</label><select name="sex" id="petSexSelect"><option ${pet.sex==='Самец'?'selected':''}>Самец</option><option ${pet.sex==='Самка'?'selected':''}>Самка</option></select></div></div>
-      <div class="field-row"><div class="field"><label>Дата рождения</label><input type="date" name="dob" value="${pet.dob||''}"></div>
-      <div class="field"><label>Вес (кг)</label><input type="number" step="0.1" name="weight" value="${pet.weight||''}"></div></div>
-      <div class="field-row"><div class="field"><label>Окрас</label><input name="color" value="${pet.color||''}"></div>
-      <div class="field"><label>Статус</label><select name="status"><option value="дома" ${pet.status==='дома'?'selected':''}>Дома</option><option value="передержка" ${pet.status==='передержка'?'selected':''}>На передержке</option><option value="другое" ${pet.status==='другое'?'selected':''}>Другое</option></select></div></div>
-      <div class="field-row"><div class="field"><label id="neuterLabel">${pet.sex==='Самец'?'Кастрация':'Стерилизация'}</label><select name="neutered" id="neuterSelect">${(pet.sex==='Самец'?[['нет','Не кастрирован'],['да','Кастрирован'],['неизвестно','Неизвестно']]:[['нет','Не стерилизована'],['да','Стерилизована'],['неизвестно','Неизвестно']]).map(([v,l])=>`<option value="${v}" ${pet.neutered===v?'selected':''}>${l}</option>`).join('')}</select></div>
-      <div class="field"><label>Дата процедуры (если есть)</label><input type="date" name="neuteredDate" value="${pet.neuteredDate||''}"></div></div>
-      <div class="field"><label>Особенности</label><input name="traits" value="${pet.traits||''}"></div>
-      <div class="field"><label>Описание</label><textarea name="description">${pet.description||''}</textarea></div>
+
+      <div class="action-card-option" onclick="processCompleteOption('${id}', 'new')">
+        <h4>2. Сделать другой препарат / изменить параметры</h4>
+        <p>Запись «${item.title}» закроется в историю, и сразу откроется форма для ввода нового названия и срока.</p>
+      </div>
+
       <div class="modal-actions">
-        ${editing?`<button type="button" class="btn btn-danger" id="archivePetBtn" data-archive-id="${pet.id}">${icon('archive')} Отправить в архив</button>`:''}
-        <button type="button" class="btn" id="cancelBtn">Отмена</button>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" class="btn" onclick="closeModal()">Отмена</button>
       </div>
-    </form>
-  </div></div>`;
-}
-function modalExpenseForm(petId){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Добавить расход</h3>
-    <form id="mform">
-      <div class="field"><label>Животное</label>${fieldsPetSelect(petId)}</div>
-      <div class="field-row"><div class="field"><label>Сумма (€)</label><input type="number" step="0.01" name="amount" required></div>
-      <div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div></div>
-      <div class="field-row"><div class="field"><label>Категория</label><select name="category">${['корм','наполнитель','ветеринар','лекарства','прививки','обработки','операции','игрушки','аксессуары','груминг','другое'].map(c=>`<option>${c}</option>`).join('')}</select></div>
-      <div class="field"><label>Способ оплаты</label><select name="pay"><option value="cash">Наличные</option><option value="card">Карта</option></select></div></div>
-      <div class="field"><label>Комментарий</label><input name="comment"></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalHealthForm(petId, type){
-  const titleMap={health:'Медицинская запись',treatment:'Обработка',vaccination:'Прививка'};
-  return ()=>`<div class="overlay"><div class="modal"><h3>Добавить: ${titleMap[type]}</h3>
-    <form id="mform">
-      <div class="field"><label>Животное</label>${fieldsPetSelect(petId)}</div>
-      ${type==='health'?`<div class="field"><label>Тип</label><select name="type">${['лекарство','заболевание','операция','анализ','обследование','аллергия','хроническое состояние','рекомендация'].map(t=>`<option>${t}</option>`).join('')}</select></div>`:`<input type="hidden" name="type" value="${type==='treatment'?'обработка':'вакцинация'}">`}
-      ${type==='treatment'?`<div class="field"><label>Тип паразитов</label><select name="subtype">${['от блох','от клещей','от блох и клещей','от глистов','от москитов','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div>`:''}
-      ${type==='vaccination'?`<div class="field"><label>Группа / от чего прививка</label><select name="group">${['бешенство','комплексная (кошки)','комплексная (собаки)','лишай','лептоспироз','другое'].map(g=>`<option>${g}</option>`).join('')}</select></div>`:''}
-      <div class="field"><label>Название препарата</label><input name="title" placeholder="Название лекарства/вакцины" required></div>
-      ${type==='treatment'?`<div class="field"><label>Производитель / бренд</label><input name="brand" placeholder="Bayer, MSD, Bravecto..."></div>`:''}
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div>
-      <div class="field"><label>Срок действия (дней)</label><input type="number" name="validDays" value="${type==='treatment'?30:type==='vaccination'?365:''}"></div></div>
-      ${type==='vaccination'?`<div class="field"><label>Ветеринар/клиника</label><input name="vet"></div>`:''}
-      <div class="field"><label>Комментарий</label><textarea name="comment"></textarea></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalVetForm(petId, visit){
-  const editing = !!visit; visit = visit||{};
-  const defaultStatus = visit.status || (visit.date && visit.date < todayISO() ? 'состоялся' : 'запланирован');
-  return ()=>`<div class="overlay"><div class="modal"><h3>${editing?'Изменить визит':'Добавить визит к ветеринару'}</h3>
-    <form id="mform">
-      ${editing?`<input type="hidden" name="id" value="${visit.id}">`:''}
-      <div class="field"><label>Животное</label>${fieldsPetSelect(visit.petId||petId)}</div>
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${visit.date||todayISO()}"></div>
-      <div class="field"><label>Статус</label><select name="status"><option value="запланирован" ${defaultStatus==='запланирован'?'selected':''}>Запланирован</option><option value="состоялся" ${defaultStatus==='состоялся'?'selected':''}>Состоялся</option></select></div></div>
-      <div class="field"><label>Клиника/врач</label><input name="clinic" value="${visit.clinic||''}"></div>
-      <div class="field"><label>Причина посещения</label><input name="reason" value="${visit.reason||''}"></div>
-      <div class="field-row"><div class="field"><label>Диагноз (если известен)</label><input name="diagnosis" value="${visit.diagnosis||''}"></div>
-      <div class="field"><label>Стоимость (€)</label><input type="number" step="0.01" name="cost" value="${visit.cost||''}"></div></div>
-      <div class="field"><label>Рекомендации</label><textarea name="recommendations">${visit.recommendations||''}</textarea></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalDocForm(petId){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Добавить документ</h3>
-    <form id="mform">
-      <div class="field"><label>Животное</label>${fieldsPetSelect(petId)}</div>
-      <div class="field"><label>Название</label><input name="name" required></div>
-      <div class="field-row"><div class="field"><label>Тип</label><select name="type">${['фото','PDF','анализ','заключение','назначение','чек','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div>
-      <div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div></div>
-      <div class="field"><label>Заметка</label><input name="note"></div>
-      <div class="row-sub">Загрузка файлов пока недоступна — сохраняются название, тип и дата документа для быстрого поиска.</div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalWeightForm(petId, editing){
-  return ()=>`<div class="overlay"><div class="modal"><h3>${editing?'Изменить измерение':'Новое измерение веса'}</h3>
-    <form id="mform">
-      <input type="hidden" name="petId" value="${petId}">
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${editing?editing.date:todayISO()}"></div>
-      <div class="field"><label>Вес (кг)</label><input type="number" step="0.01" name="weight" value="${editing?editing.weight:''}" required></div></div>
-      <div class="field"><label>Комментарий</label><input name="comment" value="${editing?editing.comment||'':''}"></div>
-      <div class="modal-actions">${editing?`<input type="hidden" name="id" value="${editing.id}">`:''}<button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalRangeForm(petId){
-  const p = petById(petId); const r = p.weightRange||{};
-  return ()=>`<div class="overlay"><div class="modal"><h3>Целевой диапазон веса — ${p.name}</h3>
-    <form id="mform">
-      <div class="field-row"><div class="field"><label>Минимум (кг)</label><input type="number" step="0.1" name="min" value="${r.min||''}"></div>
-      <div class="field"><label>Максимум (кг)</label><input type="number" step="0.1" name="max" value="${r.max||''}"></div></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalCalEventForm(dateVal){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Новое событие</h3>
-    <form id="mform">
-      <div class="field"><label>Животное (необязательно)</label><select name="petId"><option value="">— общее —</option>${activePets().map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
-      <div class="field"><label>Название</label><input name="title" required></div>
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${dateVal||todayISO()}"></div>
-      <div class="field"><label>Тип</label><select name="type">${['прививка','обработка','ветеринар','анализ','лекарство','операция','покупка корма','покупка наполнителя','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div></div>
-      <div class="field"><label>Описание</label><textarea name="description"></textarea></div>
-      <div class="field"><label>Повторять каждые (дней, необязательно)</label><input type="number" name="repeatEveryDays"></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalSupplyForm(){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Добавить товар</h3>
-    <form id="mform">
-      <div class="field"><label>Название</label><input name="name" required></div>
-      <div class="field"><label>Для кого</label>
-        <select name="petId">
-          <option value="all">Все животные</option>
-          <option value="group:dogs">Категория: Собаки</option>
-          <option value="group:cats">Категория: Кошки</option>
-          <option value="group:kittens">Категория: Котята</option>
-          ${activePets().map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="field-row"><div class="field"><label>Текущий запас</label><input type="number" step="0.1" name="currentStock" required></div>
-      <div class="field"><label>Единица</label><input name="unit" placeholder="кг, шт, л" required></div></div>
-      <div class="field-row"><div class="field"><label>Средний расход / день</label><input type="number" step="0.01" name="avgConsumption" required></div>
-      <div class="field"><label>Стоимость последней покупки (€)</label><input type="number" step="0.01" name="lastPurchaseCost"></div></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
-}
-function modalRestockForm(supplyId){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Пополнение запаса</h3>
-    <form id="mform">
-      <div class="field-row"><div class="field"><label>Куплено (кол-во)</label><input type="number" step="0.1" name="qty" required></div>
-      <div class="field"><label>Стоимость (€)</label><input type="number" step="0.01" name="cost"></div></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Добавить</button></div>
-    </form></div></div>`;
-}
-function modalSavingsForm(){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Новая копилка</h3>
-    <form id="mform">
-      <div class="field"><label>Название</label><input name="name" placeholder="Корм котикам, Ветеринар..." required></div>
-      <div class="field-row"><div class="field"><label>Стоимость одной покупки (€) — необязательно</label><input type="number" step="1" name="totalCost"></div>
-      <div class="field"><label>Уже накоплено (€)</label><input type="number" step="1" name="current" value="0"></div></div>
-      <div class="field-row"><div class="field"><label>Ежемесячное пополнение (€)</label><input type="number" step="1" name="monthly" value="0"></div>
-      <div class="field"><label>Периодичность покупки (дней)</label><input type="number" step="1" name="cycleDays" value="30"></div></div>
-      <div class="field"><label>Эмодзи</label><input name="emoji" value="🐾" maxlength="4"></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Создать</button></div>
-    </form></div></div>`;
-}
-function modalFundForm(savingId){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Пополнить копилку</h3>
-    <form id="mform">
-      <div class="field"><label>Сумма (€)</label><input type="number" step="1" name="amount" required></div>
-      <div class="field"><label>Заметка</label><input name="note"></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Пополнить</button></div>
-    </form></div></div>`;
-}
-function modalReminderSettingsForm(){
-  const o = state.reminderSettings.offsets;
-  return ()=>`<div class="overlay"><div class="modal"><h3>Сроки напоминаний</h3>
-    <form id="mform">
-      <div class="row-sub" style="margin-bottom:10px;">Через запятую, в днях.</div>
-      <div class="field"><input name="offsets" value="${o.join(', ')}"></div>
-      <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
-    </form></div></div>`;
+    </div>
+  </div>`;
+  render();
 }
 
-function bindModalFieldEvents(){
-  const cancel = document.getElementById('cancelBtn'); if(cancel) cancel.onclick = closeModal;
-  const archiveBtn = document.getElementById('archivePetBtn');
-  if(archiveBtn) archiveBtn.onclick = ()=>{
-    const id = archiveBtn.dataset.archiveId;
-    if(id && !state.archive.includes(id)){
-      state.archive.push(id);
-      scheduleSave();
-      toast('Животное отправлено в архив');
-      closeModal();
-      nav('pets');
-    }
-  };
-  const sexSelect = document.getElementById('petSexSelect');
-  if(sexSelect) sexSelect.onchange = ()=>{
-    const male = sexSelect.value==='Самец';
-    const label = document.getElementById('neuterLabel');
-    const sel = document.getElementById('neuterSelect');
-    if(label) label.textContent = male?'Кастрация':'Стерилизация';
-    if(sel) sel.innerHTML = (male?[['нет','Не кастрирован'],['да','Кастрирован'],['неизвестно','Неизвестно']]:[['нет','Не стерилизована'],['да','Стерилизована'],['неизвестно','Неизвестно']]).map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  };
-  const photoInput = document.getElementById('petPhotoInput');
-  if(photoInput) photoInput.onchange = async ()=>{
-    const f = photoInput.files[0];
-    if(!f) return;
-    try{
-      const dataUrl = await resizeImageFile(f);
-      const preview = document.getElementById('petPhotoPreview');
-      if(preview){ preview.src = dataUrl; preview.style.display='block'; }
-      photoInput.dataset.resized = dataUrl;
-    }catch(err){ console.error(err); toast('Не удалось загрузить фото'); }
-  };
-  const form = document.getElementById('mform');
-  if(form) form.onsubmit = handleModalSubmit;
+function processCompleteOption(id, choice){
+  const item = state.healthEvents.find(h => h.id === id);
+  if(!item) return;
+
+  const today = todayISO();
+
+  // Archive existing record as history log
+  item.status = 'archived';
+
+  if(choice === 'extend'){
+    // Create new cycle with exact same params
+    const newNextDate = addDays(today, item.validDays || 30);
+    state.healthEvents.push({
+      ...item,
+      id: uid(),
+      date: today,
+      nextDate: newNextDate,
+      status: 'active'
+    });
+    closeModal();
+  } else if(choice === 'new'){
+    closeModal();
+    // Open creation modal populated with base pet info, but clear title
+    openHealthModal(null, item.type, {
+      petId: item.petId,
+      group: item.group,
+      subtype: item.subtype,
+      validDays: item.validDays
+    });
+  }
 }
 
-/* ============ SUBMIT HANDLERS ============ */
-let modalCtx = {};
-async function handleModalSubmit(e){
+/* MODAL: ADD / EDIT HEALTH RECORD */
+function openHealthModal(id = null, defaultType = 'vaccination', initialData = {}){
+  const editing = id ? state.healthEvents.find(h => h.id === id) : null;
+  const item = editing || {
+    id: null,
+    petId: initialData.petId || (state.pets[0] ? state.pets[0].id : ''),
+    type: defaultType,
+    subtype: initialData.subtype || 'от блох и клещей',
+    group: initialData.group || 'комплексная (кошки)',
+    title: '',
+    brand: '',
+    date: todayISO(),
+    validDays: defaultType === 'vaccination' ? 365 : 30,
+    vet: '',
+    comment: ''
+  };
+
+  currentModal = () => `
+  <div class="overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <h3>${editing ? 'Редактировать' : 'Добавить'}: ${item.type === 'treatment' ? 'Обработку' : 'Прививку'}</h3>
+      <form id="healthForm" onsubmit="saveHealthForm(event, '${item.id || ''}', '${item.type}')">
+        <div class="field">
+          <label>Животное</label>
+          <select name="petId">
+            ${state.pets.map(p => `<option value="${p.id}" ${item.petId === p.id ? 'selected' : ''}>${p.name}</option>`).join('')}
+          </select>
+        </div>
+
+        ${item.type === 'treatment' ? `
+          <div class="field">
+            <label>Тип паразитов</label>
+            <select name="subtype">
+              ${['от блох','от клещей','от блох и клещей','от глистов','от москитов','другое'].map(t => `<option ${item.subtype===t?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        ` : `
+          <div class="field">
+            <label>Группа / от чего прививка</label>
+            <select name="group">
+              ${['бешенство','комплексная (кошки)','комплексная (собаки)','лишай','лептоспироз','другое'].map(g => `<option ${item.group===g?'selected':''}>${g}</option>`).join('')}
+            </select>
+          </div>
+        `}
+
+        <div class="field">
+          <label>Название препарата</label>
+          <input name="title" value="${item.title || ''}" placeholder="Например: Бравекто, Симпарика, Нобивак" required>
+        </div>
+
+        ${item.type === 'treatment' ? `
+          <div class="field">
+            <label>Производитель / бренд</label>
+            <input name="brand" value="${item.brand || ''}" placeholder="Zoetis, Bayer и т.д.">
+          </div>
+        ` : ''}
+
+        <div class="field-row">
+          <div class="field">
+            <label>Дата проведения</label>
+            <input type="date" name="date" value="${item.date || todayISO()}" required>
+          </div>
+          <div class="field">
+            <label>Срок действия (дней)</label>
+            <input type="number" name="validDays" value="${item.validDays || (item.type==='vaccination'?365:30)}" required>
+          </div>
+        </div>
+
+        ${item.type === 'vaccination' ? `
+          <div class="field">
+            <label>Ветеринар / клиника</label>
+            <input name="vet" value="${item.vet || ''}">
+          </div>
+        ` : ''}
+
+        <div class="field">
+          <label>Заметка / комментарий</label>
+          <textarea name="comment" rows="2">${item.comment || ''}</textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  render();
+}
+
+function saveHealthForm(e, id, type){
   e.preventDefault();
-  const formEl = e.target;
-  const fd = new FormData(formEl);
-  const data = Object.fromEntries(fd.entries());
-  const kind = modalCtx.kind;
+  const form = e.target;
+  const formData = new FormData(form);
 
-  if(kind==='pet'){
-    const photoInput = document.getElementById('petPhotoInput');
-    const newPhoto = photoInput && photoInput.dataset.resized ? photoInput.dataset.resized : null;
-    if(modalCtx.pet){
-      Object.assign(modalCtx.pet, data);
-      modalCtx.pet.weight = parseFloat(data.weight)||modalCtx.pet.weight;
-      if(newPhoto) modalCtx.pet.photo = newPhoto;
-      toast('Животное обновлено');
+  const dateVal = formData.get('date');
+  const validDaysVal = Number(formData.get('validDays')) || 30;
+  const nextDateVal = addDays(dateVal, validDaysVal);
+
+  if(id){
+    // Update existing record
+    const item = state.healthEvents.find(h => h.id === id);
+    if(item){
+      item.petId = formData.get('petId');
+      item.title = formData.get('title');
+      item.date = dateVal;
+      item.validDays = validDaysVal;
+      item.nextDate = nextDateVal;
+      item.comment = formData.get('comment');
+      if(type === 'treatment'){
+        item.subtype = formData.get('subtype');
+        item.brand = formData.get('brand');
+      } else {
+        item.group = formData.get('group');
+        item.vet = formData.get('vet');
+      }
+    }
+  } else {
+    // Create new record
+    const newItem = {
+      id: uid(),
+      petId: formData.get('petId'),
+      type: type,
+      title: formData.get('title'),
+      date: dateVal,
+      validDays: validDaysVal,
+      nextDate: nextDateVal,
+      status: 'active',
+      comment: formData.get('comment')
+    };
+    if(type === 'treatment'){
+      newItem.subtype = formData.get('subtype');
+      newItem.brand = formData.get('brand');
     } else {
-      state.pets.push({id:uid(), ...data, weight:parseFloat(data.weight)||0, weightRange:{}, photo:newPhoto||'', createdAt:todayISO()});
-      toast('Животное добавлено');
+      newItem.group = formData.get('group');
+      newItem.vet = formData.get('vet');
     }
-  }
-  else if(kind==='expense'){
-    pushToArrayRef(expensesRef, {petId:data.petId, date:data.date||todayISO(), amount:parseFloat(data.amount), cat:data.category, comment:data.comment||'', pay:data.pay||'cash'})
-      .then(()=>toast('Расход добавлен в бюджет'))
-      .catch(()=>toast('Не удалось сохранить расход'));
-    closeModal(); return;
-  }
-  else if(kind==='health' || kind==='treatment' || kind==='vaccination'){
-    const validDays = parseInt(data.validDays)||null;
-    const nextDate = validDays ? addDays(data.date, validDays) : null;
-    state.healthEvents.push({id:uid(), petId:data.petId, type:data.type, subtype:data.subtype||'', group:data.group||'', brand:data.brand||'', title:data.title, date:data.date, validDays, nextDate, comment:data.comment||'', vet:data.vet||''});
-    toast('Запись добавлена');
-  }
-  else if(kind==='vet'){
-    const status = data.status || (data.date < todayISO() ? 'состоялся' : 'запланирован');
-    if(data.id){
-      const v = state.vetVisits.find(x=>x.id===data.id);
-      if(v) Object.assign(v, {date:data.date, clinic:data.clinic, reason:data.reason, diagnosis:data.diagnosis, recommendations:data.recommendations, cost:parseFloat(data.cost)||0, status});
-      toast('Визит обновлён');
-    } else {
-      state.vetVisits.push({id:uid(), petId:data.petId, date:data.date, clinic:data.clinic, reason:data.reason, diagnosis:data.diagnosis, recommendations:data.recommendations, cost:parseFloat(data.cost)||0, status});
-      toast('Визит добавлен');
-    }
-  }
-  else if(kind==='document'){
-    state.documents.push({id:uid(), petId:data.petId, name:data.name, type:data.type, date:data.date, note:data.note||''});
-    toast('Документ добавлен');
-  }
-  else if(kind==='weight'){
-    if(data.id){
-      const w = state.weightLogs.find(x=>x.id===data.id);
-      Object.assign(w, {date:data.date, weight:parseFloat(data.weight), comment:data.comment});
-    } else {
-      state.weightLogs.push({id:uid(), petId:data.petId, date:data.date, weight:parseFloat(data.weight), comment:data.comment||''});
-      const p = petById(data.petId); if(p) p.weight = parseFloat(data.weight);
-    }
-    toast('Измерение сохранено');
-  }
-  else if(kind==='range'){
-    const p = petById(modalCtx.petId);
-    p.weightRange = {min:parseFloat(data.min)||null, max:parseFloat(data.max)||null};
-    toast('Диапазон сохранён');
-  }
-  else if(kind==='calevent'){
-    state.events.push({id:uid(), petId:data.petId||null, title:data.title, date:data.date, type:data.type, description:data.description||'', repeatEveryDays:parseInt(data.repeatEveryDays)||null, done:false});
-    toast('Событие добавлено');
-  }
-  else if(kind==='supply'){
-    state.supplies.push({id:uid(), name:data.name, petId:data.petId, currentStock:parseFloat(data.currentStock), unit:data.unit, avgConsumption:parseFloat(data.avgConsumption), lastPurchaseDate:todayISO(), lastPurchaseQty:parseFloat(data.currentStock), lastPurchaseCost:parseFloat(data.lastPurchaseCost)||0, history:[]});
-    toast('Товар добавлен');
-  }
-  else if(kind==='restock'){
-    const s = state.supplies.find(x=>x.id===modalCtx.supplyId);
-    s.currentStock += parseFloat(data.qty);
-    s.lastPurchaseDate = todayISO(); s.lastPurchaseQty = parseFloat(data.qty); s.lastPurchaseCost = parseFloat(data.cost)||0;
-    s.history = s.history||[]; s.history.push({date:todayISO(), qty:parseFloat(data.qty), cost:parseFloat(data.cost)||0});
-    toast('Запас пополнен');
-  }
-  else if(kind==='savingsGoal'){
-    pushToArrayRef(fundsRef, {name:data.name, totalCost:data.totalCost?parseFloat(data.totalCost):0, currentSaved:parseFloat(data.current)||0, monthlyAmount:parseFloat(data.monthly)||0, cycleDays:parseInt(data.cycleDays)||30, emoji:data.emoji||'🐾', color:'#4B6B4A', lastPurchaseDate:todayISO(), linkedPlanId:null, purchaseHistory:[]})
-      .then(()=>toast('Копилка создана в общем бюджете'))
-      .catch(()=>toast('Не удалось создать копилку'));
-    closeModal(); return;
-  }
-  else if(kind==='fund'){
-    const s = state.savings.find(x=>x.id===modalCtx.savingId);
-    if(s){
-      const amount = parseFloat(data.amount)||0;
-      const newHistory = [...(s.history||[]), {date:todayISO(), amount, note:data.note||''}];
-      updateArrayItem(fundsRef, s.id, {currentSaved:(s.current||0)+amount, purchaseHistory:newHistory})
-        .then(()=>toast('Копилка пополнена'))
-        .catch(()=>toast('Не удалось пополнить копилку'));
-    }
-    closeModal(); return;
-  }
-  else if(kind==='reminderSettings'){
-    state.reminderSettings.offsets = data.offsets.split(',').map(x=>parseInt(x.trim())).filter(Boolean).sort((a,b)=>b-a);
-    toast('Сроки обновлены');
+    state.healthEvents.push(newItem);
   }
 
-  scheduleSave();
   closeModal();
 }
 
-/* ============ QUICK ACTION / DELEGATED EVENTS ============ */
-document.addEventListener('click', (e)=>{
-  const q = e.target.closest('[data-quick]');
-  if(q){
-    const kind = q.dataset.quick;
-    const petId = q.dataset.pet || (route.tab==='pet'?route.petId:activePets()[0]?.id);
-    modalCtx = {kind: kind==='calevent'?'calevent':kind};
-    if(kind==='pet') openModal(modalPetForm());
-    else if(kind==='expense') openModal(modalExpenseForm(petId));
-    else if(kind==='treatment') openModal(modalHealthForm(petId,'treatment'));
-    else if(kind==='vaccination') openModal(modalHealthForm(petId,'vaccination'));
-    else if(kind==='health') openModal(modalHealthForm(petId,'health'));
-    else if(kind==='vet') openModal(modalVetForm(petId));
-    else if(kind==='document') openModal(modalDocForm(petId));
-    else if(kind==='weight') openModal(modalWeightForm(petId));
-    else if(kind==='calevent') openModal(modalCalEventForm());
-    else if(kind==='supply') openModal(modalSupplyForm());
-    else if(kind==='savingsGoal') openModal(modalSavingsForm());
-    else if(kind==='reminderSettings') openModal(modalReminderSettingsForm());
-    return;
+function deleteHealth(id){
+  if(confirm('Удалить эту запись?')){
+    state.healthEvents = state.healthEvents.filter(h => h.id !== id);
+    render();
   }
-  const editPet = e.target.closest('[data-edit-pet]');
-  if(editPet){ modalCtx={kind:'pet', pet:petById(editPet.dataset.editPet)}; openModal(modalPetForm(modalCtx.pet)); return; }
-
-  const editW = e.target.closest('[data-edit-weight]');
-  if(editW){ const w = state.weightLogs.find(x=>x.id===editW.dataset.editWeight); modalCtx={kind:'weight'}; openModal(modalWeightForm(w.petId, w)); return; }
-  const delW = e.target.closest('[data-del-weight]');
-  if(delW){ state.weightLogs = state.weightLogs.filter(x=>x.id!==delW.dataset.delWeight); scheduleSave(); render(); return; }
-
-  const setRange = e.target.closest('[data-set-range]');
-  if(setRange){ modalCtx={kind:'range', petId:setRange.dataset.setRange}; openModal(modalRangeForm(setRange.dataset.setRange)); return; }
-
-  const completeHealth = e.target.closest('[data-complete-health]');
-  if(completeHealth){
-    const h = state.healthEvents.find(x=>x.id===completeHealth.dataset.completeHealth);
-    if(h){
-      const doneDate = todayISO();
-      h.history = h.history || [];
-      h.history.push({completedOn:doneDate, wasDueDate:h.nextDate||null});
-      h.date = doneDate;
-      h.nextDate = h.validDays ? addDays(doneDate, h.validDays) : null;
-      h.completedCount = (h.completedCount||0) + 1;
-      scheduleSave(); render();
-      const label = h.type==='вакцинация' ? 'Прививка' : (h.type==='обработка' ? 'Обработка' : 'Запись');
-      toast(h.nextDate ? `${label} отмечена сделанной — следующий срок ${fmtDate(h.nextDate)}` : `${label} отмечена сделанной`);
-    }
-    return;
-  }
-
-  const delHealth = e.target.closest('[data-del-health]');
-  if(delHealth){ state.healthEvents = state.healthEvents.filter(x=>x.id!==delHealth.dataset.delHealth); scheduleSave(); render(); return; }
-  const skipHealth = e.target.closest('[data-skip-health]');
-  if(skipHealth){
-    const h = state.healthEvents.find(x=>x.id===skipHealth.dataset.skipHealth);
-    if(h && h.nextDate){
-      const skippedFrom = h.nextDate;
-      h.nextDate = addDays(h.nextDate, h.validDays||30);
-      h.comment = (h.comment?h.comment+'; ':'')+'пропущено: '+fmtDate(skippedFrom);
-      scheduleSave(); render(); toast('Обработка пропущена — следующая дата перенесена');
-    }
-    return;
-  }
-  const delVet = e.target.closest('[data-del-vet]');
-  if(delVet){ state.vetVisits = state.vetVisits.filter(x=>x.id!==delVet.dataset.delVet); scheduleSave(); render(); return; }
-  const delDoc = e.target.closest('[data-del-doc]');
-  if(delDoc){ state.documents = state.documents.filter(x=>x.id!==delDoc.dataset.delDoc); scheduleSave(); render(); return; }
-  const delExpense = e.target.closest('[data-del-expense]');
-  if(delExpense){ removeArrayItem(expensesRef, delExpense.dataset.delExpense).then(()=>toast('Расход удалён')); return; }
-  const delSupply = e.target.closest('[data-del-supply]');
-  if(delSupply){ state.supplies = state.supplies.filter(x=>x.id!==delSupply.dataset.delSupply); scheduleSave(); render(); return; }
-  const delSaving = e.target.closest('[data-del-saving]');
-  if(delSaving){ removeArrayItem(fundsRef, delSaving.dataset.delSaving).then(()=>toast('Копилка удалена')); return; }
-
-  const restock = e.target.closest('[data-restock]');
-  if(restock){ modalCtx={kind:'restock', supplyId:restock.dataset.restock}; openModal(modalRestockForm(restock.dataset.restock)); return; }
-  const fund = e.target.closest('[data-fund]');
-  if(fund){ modalCtx={kind:'fund', savingId:fund.dataset.fund}; openModal(modalFundForm(fund.dataset.fund)); return; }
-
-  const doneEvt = e.target.closest('[data-done-event]');
-  if(doneEvt){
-    const ev = state.events.find(x=>x.id===doneEvt.dataset.doneEvent);
-    if(ev){
-      if(ev.repeatEveryDays){ ev.date = addDays(ev.date, ev.repeatEveryDays); }
-      else { ev.done = true; }
-      scheduleSave(); render(); toast('Отмечено выполненным');
-    }
-    return;
-  }
-
-  const petTabBtn = e.target.closest('[data-pet-tab]');
-  if(petTabBtn){ route.petTab = petTabBtn.dataset.petTab; render(); return; }
-
-  const printBtn = e.target.closest('[data-print-pet]');
-  if(printBtn){ window.print(); return; }
-
-  const unarchive = e.target.closest('[data-unarchive]');
-  if(unarchive){ state.archive = state.archive.filter(id=>id!==unarchive.dataset.unarchive); scheduleSave(); render(); toast('Животное возвращено из архива'); return; }
-
-  const deletePet = e.target.closest('[data-delete-pet]');
-  if(deletePet){
-    const id = deletePet.dataset.deletePet;
-    if(confirm('Удалить это животное навсегда? Действие необратимо.')){
-      state.pets = state.pets.filter(p=>p.id!==id);
-      state.archive = state.archive.filter(x=>x!==id);
-      state.weightLogs = state.weightLogs.filter(x=>x.petId!==id);
-      state.healthEvents = state.healthEvents.filter(x=>x.petId!==id);
-      state.vetVisits = state.vetVisits.filter(x=>x.petId!==id);
-      state.documents = state.documents.filter(x=>x.petId!==id);
-      state.events = state.events.filter(x=>x.petId!==id);
-      scheduleSave(); render(); toast('Животное удалено');
-    }
-    return;
-  }
-
-  const calDay = e.target.closest('[data-cal-day]');
-  if(calDay){ modalCtx={kind:'calevent'}; const iso=calDay.dataset.calDay; openModal(modalCalEventForm(iso)); return; }
-
-  const calPrev = e.target.closest('#calPrev');
-  if(calPrev){ calCursor.setMonth(calCursor.getMonth()-1); render(); return; }
-  const calNext = e.target.closest('#calNext');
-  if(calNext){ calCursor.setMonth(calCursor.getMonth()+1); render(); return; }
-
-  const wPeriod = e.target.closest('[data-weight-period]');
-  if(wPeriod){ document.querySelectorAll('[data-weight-period]').forEach(b=>b.classList.remove('btn-primary')); wPeriod.classList.add('btn-primary'); drawWeightChart(wPeriod.dataset.petW, wPeriod.dataset.weightPeriod); return; }
-
-  const exportCsv = e.target.closest('#exportCsv');
-  if(exportCsv){ downloadExpensesCsv(); return; }
-  const backupBtn = e.target.closest('#backupBtn');
-  if(backupBtn){ downloadBackup(); return; }
-});
-
-function downloadExpensesCsv(){
-  const rows = [['Дата','Животное','Категория','Сумма','Комментарий']];
-  state.expenses.forEach(e=> rows.push([e.date, petById(e.petId)?.name||'', e.category, e.amount, e.comment||'']));
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pet-expenses.csv'; a.click();
-}
-function downloadBackup(){
-  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pet-dashboard-backup.json'; a.click();
 }
 
-/* ============ SEARCH ============ */
-function renderSearchResults(q){
-  // simple: not a separate page, just could filter dashboard in future. For now no-op placeholder.
-}
-
-/* ============ AFTER RENDER: draw charts if needed ============ */
-const _origRender = render;
-render = function(){
-  _origRender();
-  if(route.tab==='pet' && route.petTab==='weight'){ setTimeout(()=>drawWeightChart(route.petId,'всё'),0); }
-  if(route.tab==='expenses'){ setTimeout(drawExpenseCharts,0); }
-};
-
-/* ============ INIT ============ */
-(async function init(){
-  await loadState();
+function closeModal(){
+  currentModal = null;
   render();
-})();
+}
+
+// Initial render
+render();
 </script>
 </body>
 </html>
