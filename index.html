@@ -208,6 +208,8 @@ button{font-family:inherit;cursor:pointer;}
 .icon-btn{background:none;border:none;padding:5px;border-radius:6px;color:var(--ink-soft);}
 .icon-btn:hover{background:var(--paper-2);color:var(--ink);}
 .icon-btn svg{width:15px;height:15px;stroke:currentColor;}
+.icon-btn.complete-btn{color:var(--moss);}
+.icon-btn.complete-btn:hover{background:var(--moss-tint);color:var(--moss-dark);}
 
 .chip-select{display:flex;flex-wrap:wrap;gap:6px;}
 .chip-opt{padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink-soft);}
@@ -258,7 +260,8 @@ const ICONS = {
   syringe:'<path d="M13 3l4 4-2 2-4-4 2-2Z"/><path d="M13.5 5.5 6 13v3H3v-3l7.5-7.5"/><path d="M9 9l2 2M7 11l2 2"/>',
   drop:'<path d="M10 3s5 5.8 5 9.2A5 5 0 1 1 5 12.2C5 8.8 10 3 10 3Z"/>',
   skip:'<path d="M5 4l8 6-8 6V4Z"/><path d="M14 4v12"/>',
-  cake:'<path d="M3 17v-5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M3 13c1 1 2 1 3 0s2-1 3 0 2 1 3 0 2-1 3 0 2 1 3 0"/><path d="M10 6V3"/><path d="M10 3c-.6 0-1-.5-1-1s.4-1 1-1 1 .5 1 1-.4 1-1 1Z"/>'
+  cake:'<path d="M3 17v-5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M3 13c1 1 2 1 3 0s2-1 3 0 2 1 3 0 2-1 3 0 2 1 3 0"/><path d="M10 6V3"/><path d="M10 3c-.6 0-1-.5-1-1s.4-1 1-1 1 .5 1 1-.4 1-1 1Z"/>',
+  check:'<path d="M4 10.5l4 4 8-9"/>'
 };
 function icon(name){return `<svg viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;}
 
@@ -838,6 +841,7 @@ function healthRow(h){
     <div class="row-main"><div class="row-title">${h.title} <span class="pill pill-sky">${h.type}</span></div>
       <div class="row-sub">${fmtDate(h.date)}${h.description?' · '+h.description:''}${h.comment?' · '+h.comment:''}</div></div>
     <div class="row-right">${h.nextDate?'след.: '+fmtDate(h.nextDate):''}</div>
+    ${h.nextDate?`<button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить выполненным — срок продлится">${icon('check')}</button>`:''}
     <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
   </div>`;
 }
@@ -865,12 +869,14 @@ function petTreatments(p){
 }
 function treatmentRow(h){
   const p = petById(h.petId);
+  const overdue = h.nextDate && h.nextDate < todayISO();
   return `<div class="list-row">
       <span class="dot dot-clay"></span>
-      <div class="row-main"><div class="row-title">${h.title||'Обработка'} <span class="pill pill-clay">${h.subtype||'обработка'}</span>${p?` <span class="pill pill-moss">${p.name}</span>`:''}</div>
+      <div class="row-main"><div class="row-title">${h.title||'Обработка'} <span class="pill pill-clay">${h.subtype||'обработка'}</span>${p?` <span class="pill pill-moss">${p.name}</span>`:''}${h.completedCount?` <span class="pill pill-sky">✓ ×${h.completedCount}</span>`:''}</div>
         <div class="row-sub">Дата: ${fmtDate(h.date)} · Срок действия: ${h.validDays||'—'} дн.${h.brand?' · Производитель: '+h.brand:''}${h.comment?' · '+h.comment:''}</div></div>
-      <div class="row-right">след.: ${fmtDate(h.nextDate)}</div>
-      <button class="icon-btn" data-skip-health="${h.id}" title="Пропустить обработку">${icon('skip')}</button>
+      <div class="row-right" style="${overdue?'color:var(--red);':''}">след.: ${fmtDate(h.nextDate)}</div>
+      <button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить сделанной — продлит срок на ${h.validDays||30} дн.">${icon('check')}</button>
+      <button class="icon-btn" data-skip-health="${h.id}" title="Пропустить (без отметки о выполнении)">${icon('skip')}</button>
       <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
     </div>`;
 }
@@ -884,11 +890,13 @@ function petVaccinations(p){
 }
 function vaccinationRow(h){
   const p = petById(h.petId);
+  const overdue = h.nextDate && h.nextDate < todayISO();
   return `<div class="list-row">
       <span class="dot dot-moss"></span>
-      <div class="row-main"><div class="row-title">${h.title} ${h.group?`<span class="pill pill-purple">${h.group}</span>`:''}${p?` <span class="pill pill-moss">${p.name}</span>`:''}</div>
+      <div class="row-main"><div class="row-title">${h.title} ${h.group?`<span class="pill pill-purple">${h.group}</span>`:''}${p?` <span class="pill pill-moss">${p.name}</span>`:''}${h.completedCount?` <span class="pill pill-sky">✓ ×${h.completedCount}</span>`:''}</div>
         <div class="row-sub">Дата: ${fmtDate(h.date)}${h.vet?' · '+h.vet:''}${h.comment?' · '+h.comment:''}</div></div>
-      <div class="row-right">след.: ${fmtDate(h.nextDate)}</div>
+      <div class="row-right" style="${overdue?'color:var(--red);':''}">след.: ${fmtDate(h.nextDate)}</div>
+      ${h.nextDate?`<button class="icon-btn complete-btn" data-complete-health="${h.id}" title="Отметить сделанной — продлит срок на ${h.validDays||365} дн.">${icon('check')}</button>`:''}
       <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
     </div>`;
 }
@@ -1165,6 +1173,7 @@ function reminderRow(it){
     <span class="dot ${urgencyDot(d)}"></span>
     <div class="row-main"><div class="row-title">${it.title}</div><div class="row-sub">${fmtDate(it.date)} · ${d===0?'сегодня':d===1?'завтра':'через '+d+' дн.'}</div></div>
     ${it.source==='event'?`<button class="icon-btn" data-done-event="${it.id}" title="Отметить выполненным">✓</button>`:''}
+    ${it.source==='health'?`<button class="icon-btn complete-btn" data-complete-health="${it.id}" title="Отметить выполненным — срок продлится">${icon('check')}</button>`:''}
   </div>`;
 }
 
@@ -1682,6 +1691,23 @@ document.addEventListener('click', (e)=>{
 
   const setRange = e.target.closest('[data-set-range]');
   if(setRange){ modalCtx={kind:'range', petId:setRange.dataset.setRange}; openModal(modalRangeForm(setRange.dataset.setRange)); return; }
+
+  const completeHealth = e.target.closest('[data-complete-health]');
+  if(completeHealth){
+    const h = state.healthEvents.find(x=>x.id===completeHealth.dataset.completeHealth);
+    if(h){
+      const doneDate = todayISO();
+      h.history = h.history || [];
+      h.history.push({completedOn:doneDate, wasDueDate:h.nextDate||null});
+      h.date = doneDate;
+      h.nextDate = h.validDays ? addDays(doneDate, h.validDays) : null;
+      h.completedCount = (h.completedCount||0) + 1;
+      scheduleSave(); render();
+      const label = h.type==='вакцинация' ? 'Прививка' : (h.type==='обработка' ? 'Обработка' : 'Запись');
+      toast(h.nextDate ? `${label} отмечена сделанной — следующий срок ${fmtDate(h.nextDate)}` : `${label} отмечена сделанной`);
+    }
+    return;
+  }
 
   const delHealth = e.target.closest('[data-del-health]');
   if(delHealth){ state.healthEvents = state.healthEvents.filter(x=>x.id!==delHealth.dataset.delHealth); scheduleSave(); render(); return; }
