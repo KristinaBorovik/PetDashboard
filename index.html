@@ -8,8 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <style>
 :root{
   --paper:#F2EEE3; --paper-2:#EAE4D4; --card:#FCFAF3; --ink:#22301F; --ink-soft:#5B6B54;
@@ -28,17 +26,17 @@ button{font-family:inherit;cursor:pointer;}
 ::-webkit-scrollbar-thumb{background:#D2C9AC;border-radius:6px;}
 
 #app{display:flex;min-height:100vh;}
-.sidebar{width:216px;flex-shrink:0;background:var(--paper-2);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar{width:220px;flex-shrink:0;background:var(--paper-2);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
 .brand{display:flex;align-items:center;gap:9px;padding:4px 8px 18px 8px;}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--moss);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .brand-mark svg{width:17px;height:17px;stroke:var(--paper);}
 .brand-text{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;line-height:1.15;}
 .brand-text small{display:block;font-family:'Inter';font-weight:500;font-size:10.5px;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase;margin-top:1px;}
+
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--ink-soft);font-weight:500;font-size:13.5px;border:none;background:transparent;text-align:left;width:100%;transition:background .12s, color .12s;}
 .nav-item svg{width:16px;height:16px;stroke:currentColor;flex-shrink:0;}
 .nav-item:hover{background:#E1DBC6;color:var(--ink);}
 .nav-item.active{background:var(--moss);color:#fff;}
-.nav-item .badge{margin-left:auto;background:var(--clay);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;}
 
 .main{flex:1;min-width:0;padding:26px 34px 60px;max-width:1180px;}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;}
@@ -50,7 +48,10 @@ button{font-family:inherit;cursor:pointer;}
 .btn svg{width:14px;height:14px;stroke:currentColor;}
 .btn-primary{background:var(--moss);border-color:var(--moss);color:#fff;}
 .btn-primary:hover{background:var(--moss-dark);}
-.btn-sm{padding:6px 10px;font-size:12px;}
+.btn-sm{padding:5px 9px;font-size:12px;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px;}
 .list-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line);}
@@ -61,6 +62,7 @@ button{font-family:inherit;cursor:pointer;}
 .row-title{font-weight:600;font-size:13.5px;}
 .row-sub{color:var(--ink-soft);font-size:12px;margin-top:2px;}
 .row-right{font-size:12px;color:var(--ink-soft);white-space:nowrap;font-family:'IBM Plex Mono';margin-right:6px;}
+
 .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;}
 .pill-clay{background:var(--clay-tint);color:var(--clay);}
 .pill-moss{background:var(--moss-tint);color:var(--moss-dark);}
@@ -82,6 +84,7 @@ button{font-family:inherit;cursor:pointer;}
 .field-row{display:flex;gap:10px;} .field-row>*{flex:1;}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
 .empty-note{color:var(--ink-soft);font-size:13px;padding:12px 2px;}
+
 .action-card-option{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color .15s, background .15s;}
 .action-card-option:hover{border-color:var(--moss);background:#fff;}
 .action-card-option h4{font-size:14px;margin-bottom:3px;color:var(--moss-dark);}
@@ -94,22 +97,27 @@ button{font-family:inherit;cursor:pointer;}
 <script>
 const ICONS = {
   paw:'<circle cx="5" cy="6" r="1.6"/><circle cx="9" cy="4" r="1.6"/><circle cx="13" cy="6" r="1.6"/><path d="M9 9c-3 0-5 2.4-4.6 4.7.3 1.7 1.9 2.6 3.2 1.9.9-.5 1.7-.5 2.6 0 1.3.7 3-.2 3.2-1.9C13.9 11.4 12 9 9 9Z"/>',
+  home:'<path d="M3 10l7-7 7 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7z"/>',
+  calendar:'<rect x="3" y="4" width="14" height="14" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/>',
+  syringe:'<path d="M13 3l4 4-2 2-4-4 2-2Z"/><path d="M13.5 5.5 6 13v3H3v-3l7.5-7.5"/><path d="M9 9l2 2M7 11l2 2"/>',
+  drop:'<path d="M10 3s5 5.8 5 9.2A5 5 0 1 1 5 12.2C5 8.8 10 3 10 3Z"/>',
+  chart:'<path d="M3 17h14M4 13l4-5 4 3 5-6"/>',
+  user:'<circle cx="10" cy="6" r="3"/><path d="M4 17c0-3 3-5 6-5s6 2 6 5"/>',
   plus:'<path d="M10 4v12M4 10h12"/>',
   edit:'<path d="M13 3l4 4-9 9-4.5 1 1-4.5L13 3Z"/>',
   trash:'<path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10"/>',
-  syringe:'<path d="M13 3l4 4-2 2-4-4 2-2Z"/><path d="M13.5 5.5 6 13v3H3v-3l7.5-7.5"/><path d="M9 9l2 2M7 11l2 2"/>',
-  drop:'<path d="M10 3s5 5.8 5 9.2A5 5 0 1 1 5 12.2C5 8.8 10 3 10 3Z"/>',
   check:'<path d="M4 10.5l4 4 8-9"/>'
 };
 function icon(name){ return `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`; }
 
-/* STATE & FIREBASE MOCK / INITIALIZATION */
+/* STATE (Хранение данных) */
 let state = {
-  pets: [{id:'p1', name:'Шиба', species:'Собака'}],
-  healthEvents: [
-    {id:'h1', petId:'p1', type:'вакцинация', group:'бешенство', title:'Рабизин', date:'2025-08-14', validDays:365, nextDate:'2026-08-14', status:'active', comment:''},
-    {id:'h2', petId:'p1', type:'обработка', subtype:'от блох и клещей', title:'Симпарика', brand:'Zoetis', date:'2026-05-14', validDays:90, nextDate:'2026-08-12', status:'active', comment:''}
-  ]
+  pets: [
+    {id:'p1', name:'Питомец 1', species:'Собака', breed:'', birth:'2022-01-01', weight:10}
+  ],
+  healthEvents: [],
+  vets: [],
+  weights: []
 };
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -117,7 +125,7 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 function addDays(iso, n){ const d = new Date(iso+'T00:00:00'); d.setDate(d.getDate() + Number(n)); return d.toISOString().slice(0,10); }
 function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}); }
 
-let route = { tab: 'vaccinations' };
+let route = { tab: 'dashboard' };
 let currentModal = null;
 
 function render(){
@@ -125,17 +133,121 @@ function render(){
   app.innerHTML = `
     <div class="sidebar">
       <div class="brand"><div class="brand-mark">${icon('paw')}</div><div class="brand-text">Полевой журнал<small>Pet Dashboard</small></div></div>
+      <button class="nav-item ${route.tab==='dashboard'?'active':''}" onclick="route.tab='dashboard';render();">${icon('home')}<span>Главная</span></button>
+      <button class="nav-item ${route.tab==='pets'?'active':''}" onclick="route.tab='pets';render();">${icon('paw')}<span>Животные</span></button>
+      <button class="nav-item ${route.tab==='calendar'?'active':''}" onclick="route.tab='calendar';render();">${icon('calendar')}<span>Календарь</span></button>
       <button class="nav-item ${route.tab==='vaccinations'?'active':''}" onclick="route.tab='vaccinations';render();">${icon('syringe')}<span>Прививки</span></button>
       <button class="nav-item ${route.tab==='treatments'?'active':''}" onclick="route.tab='treatments';render();">${icon('drop')}<span>Обработки</span></button>
+      <button class="nav-item ${route.tab==='analytics'?'active':''}" onclick="route.tab='analytics';render();">${icon('chart')}<span>Питание и Вес</span></button>
+      <button class="nav-item ${route.tab==='vets'?'active':''}" onclick="route.tab='vets';render();">${icon('user')}<span>Ветеринары</span></button>
     </div>
     <div class="main">
-      ${route.tab==='vaccinations' ? renderVaccinationsPage() : renderTreatmentsPage()}
+      ${renderCurrentTab()}
     </div>
     ${currentModal ? currentModal() : ''}
   `;
+  if(route.tab === 'analytics') initAnalyticsCharts();
 }
 
-/* VACCINATIONS PAGE */
+function renderCurrentTab(){
+  switch(route.tab){
+    case 'dashboard': return renderDashboard();
+    case 'pets': return renderPetsPage();
+    case 'calendar': return renderCalendarPage();
+    case 'vaccinations': return renderVaccinationsPage();
+    case 'treatments': return renderTreatmentsPage();
+    case 'analytics': return renderAnalyticsPage();
+    case 'vets': return renderVetsPage();
+    default: return renderDashboard();
+  }
+}
+
+/* 1. DASHBOARD */
+function renderDashboard(){
+  const activeEvents = state.healthEvents.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Обзор</div><div class="page-sub">Сводка по всем питомцам и предстоящим событиям</div></div>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>Питомцев</h4>
+      <div style="font-size:24px; font-weight:700; margin-top:6px;">${state.pets.length}</div>
+    </div>
+    <div class="card">
+      <h4>Запланировано событий</h4>
+      <div style="font-size:24px; font-weight:700; margin-top:6px; color:var(--moss);">${activeEvents.length}</div>
+    </div>
+    <div class="card">
+      <h4>Ветеринарных контактов</h4>
+      <div style="font-size:24px; font-weight:700; margin-top:6px;">${state.vets.length}</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Ближайшие задачи</h3>
+    ${activeEvents.length ? activeEvents.map(h => {
+      const pet = state.pets.find(p => p.id === h.petId);
+      return `
+      <div class="list-row">
+        <span class="dot ${h.type==='вакцинация'?'dot-moss':'dot-clay'}"></span>
+        <div class="row-main">
+          <div class="row-title">${h.title || 'Без названия'} <span class="pill pill-moss">${pet?pet.name:''}</span></div>
+          <div class="row-sub">${h.type} · Дата следующей процедуры: ${fmtDate(h.nextDate)}</div>
+        </div>
+        <button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить выполненной">${icon('check')}</button>
+      </div>`;
+    }).join('') : '<div class="empty-note">Нет запланированных задач.</div>'}
+  </div>`;
+}
+
+/* 2. PETS PAGE */
+function renderPetsPage(){
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Мои питомцы</div><div class="page-sub">Карточки ваших животных</div></div>
+    <button class="btn btn-primary" onclick="openPetModal()">${icon('plus')} Добавить питомца</button>
+  </div>
+  <div class="grid-2">
+    ${state.pets.map(p => `
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <h3>${p.name}</h3>
+          <div>
+            <button class="icon-btn" onclick="openPetModal('${p.id}')">${icon('edit')}</button>
+            <button class="icon-btn" onclick="deletePet('${p.id}')">${icon('trash')}</button>
+          </div>
+        </div>
+        <div style="font-size:13px; color:var(--ink-soft); margin-top:6px;">
+          Вид: ${p.species} ${p.breed ? '· Breed: '+p.breed : ''}<br>
+          Дата рождения: ${fmtDate(p.birth)}<br>
+          Текущий вес: ${p.weight ? p.weight + ' кг' : 'не указан'}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+/* 3. CALENDAR PAGE */
+function renderCalendarPage(){
+  const activeEvents = state.healthEvents.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Календарь процедур</div><div class="page-sub">Хронологический список обработок и прививок</div></div>
+  </div>
+  <div class="card">
+    ${activeEvents.length ? activeEvents.map(h => `
+      <div class="list-row">
+        <div class="row-right" style="width:110px;">${fmtDate(h.nextDate)}</div>
+        <div class="row-main">
+          <div class="row-title">${h.title} (${h.type})</div>
+          <div class="row-sub">${h.comment || ''}</div>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-note">Календарь пуст.</div>'}
+  </div>`;
+}
+
+/* 4. VACCINATIONS PAGE */
 function renderVaccinationsPage(){
   const list = state.healthEvents.filter(h => h.type === 'вакцинация');
   const activeList = list.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
@@ -144,18 +256,17 @@ function renderVaccinationsPage(){
   return `
   <div class="topbar">
     <div><div class="page-title">Прививки</div><div class="page-sub">Управление вакцинацией и история</div></div>
-    <button class="btn btn-primary" onclick="openHealthModal(null, 'vaccination')">${icon('plus')} Добавить прививку</button>
+    <button class="btn btn-primary" onclick="openHealthModal(null, 'вакцинация')">${icon('plus')} Добавить прививку</button>
   </div>
   <div class="card">
-    <h3 style="font-size:15px; margin-bottom:12px;">Активные прививки</h3>
-    ${activeList.length ? activeList.map(h => vaccinationRow(h)).join('') : `<div class="empty-note">Активных прививок не найдено.</div>`}
+    <h3 style="font-size:15px; margin-bottom:12px;">Предстоящие прививки</h3>
+    ${activeList.length ? activeList.map(h => vaccinationRow(h)).join('') : `<div class="empty-note">Нет активных прививок. Нажмите «Добавить прививку».</div>`}
   </div>
   ${historyList.length ? `
   <div class="card" style="margin-top:20px; opacity:0.85;">
     <h3 style="font-size:15px; margin-bottom:12px; color:var(--ink-soft);">История сделанных прививок</h3>
     ${historyList.map(h => vaccinationRow(h, true)).join('')}
-  </div>` : ''}
-  `;
+  </div>` : ''}`;
 }
 
 function vaccinationRow(h, isHistory = false){
@@ -166,24 +277,21 @@ function vaccinationRow(h, isHistory = false){
     <span class="dot ${isHistory ? 'dot-sky' : 'dot-moss'}"></span>
     <div class="row-main">
       <div class="row-title">
-        ${h.title} ${h.group ? `<span class="pill pill-purple">${h.group}</span>` : ''}
+        ${h.title || 'Прививка'} ${h.group ? `<span class="pill pill-purple">${h.group}</span>` : ''}
         ${pet ? `<span class="pill pill-moss">${pet.name}</span>` : ''}
-        ${isHistory ? `<span class="pill pill-sky">Архив/Сделано</span>` : ''}
       </div>
       <div class="row-sub">Сделано: ${fmtDate(h.date)}${h.vet ? ' · ' + h.vet : ''}${h.comment ? ' · ' + h.comment : ''}</div>
     </div>
     <div class="row-right" style="${overdue ? 'color:var(--red);font-weight:600;' : ''}">
-      ${isHistory ? '' : 'Следующая: ' + fmtDate(h.nextDate)}
+      ${isHistory ? 'Архив' : 'Следующая: ' + fmtDate(h.nextDate)}
     </div>
-    ${!isHistory ? `
-      <button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>
-    ` : ''}
-    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'vaccination')" title="Редактировать">${icon('edit')}</button>
+    ${!isHistory ? `<button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>` : ''}
+    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'вакцинация')" title="Редактировать">${icon('edit')}</button>
     <button class="icon-btn" onclick="deleteHealth('${h.id}')" title="Удалить">${icon('trash')}</button>
   </div>`;
 }
 
-/* TREATMENTS PAGE */
+/* 5. TREATMENTS PAGE */
 function renderTreatmentsPage(){
   const list = state.healthEvents.filter(h => h.type === 'обработка');
   const activeList = list.filter(h => h.status !== 'archived').sort((a,b) => (a.nextDate||'').localeCompare(b.nextDate||''));
@@ -191,19 +299,18 @@ function renderTreatmentsPage(){
 
   return `
   <div class="topbar">
-    <div><div class="page-title">Обработки от паразитов</div><div class="page-sub">Блохи, клещи, глисты и т.д.</div></div>
-    <button class="btn btn-primary" onclick="openHealthModal(null, 'treatment')">${icon('plus')} Добавить обработку</button>
+    <div><div class="page-title">Обработки от паразитов</div><div class="page-sub">Блохи, клещи, гельминты</div></div>
+    <button class="btn btn-primary" onclick="openHealthModal(null, 'обработка')">${icon('plus')} Добавить обработку</button>
   </div>
   <div class="card">
     <h3 style="font-size:15px; margin-bottom:12px;">Активные обработки</h3>
-    ${activeList.length ? activeList.map(h => treatmentRow(h)).join('') : `<div class="empty-note">Активных обработок не найдено.</div>`}
+    ${activeList.length ? activeList.map(h => treatmentRow(h)).join('') : `<div class="empty-note">Нет активных обработок. Нажмите «Добавить обработку».</div>`}
   </div>
   ${historyList.length ? `
   <div class="card" style="margin-top:20px; opacity:0.85;">
     <h3 style="font-size:15px; margin-bottom:12px; color:var(--ink-soft);">История обработок</h3>
     ${historyList.map(h => treatmentRow(h, true)).join('')}
-  </div>` : ''}
-  `;
+  </div>` : ''}`;
 }
 
 function treatmentRow(h, isHistory = false){
@@ -216,22 +323,74 @@ function treatmentRow(h, isHistory = false){
       <div class="row-title">
         ${h.title || 'Обработка'} <span class="pill pill-clay">${h.subtype || 'обработка'}</span>
         ${pet ? `<span class="pill pill-moss">${pet.name}</span>` : ''}
-        ${isHistory ? `<span class="pill pill-sky">Архив/Сделано</span>` : ''}
       </div>
       <div class="row-sub">Сделано: ${fmtDate(h.date)} · Срок: ${h.validDays || 30} дн.${h.brand ? ' · ' + h.brand : ''}${h.comment ? ' · ' + h.comment : ''}</div>
     </div>
     <div class="row-right" style="${overdue ? 'color:var(--red);font-weight:600;' : ''}">
-      ${isHistory ? '' : 'Следующая: ' + fmtDate(h.nextDate)}
+      ${isHistory ? 'Архив' : 'Следующая: ' + fmtDate(h.nextDate)}
     </div>
-    ${!isHistory ? `
-      <button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>
-    ` : ''}
-    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'treatment')" title="Редактировать">${icon('edit')}</button>
+    ${!isHistory ? `<button class="icon-btn complete-btn" onclick="openCompleteDialog('${h.id}')" title="Отметить сделанной">${icon('check')}</button>` : ''}
+    <button class="icon-btn" onclick="openHealthModal('${h.id}', 'обработка')" title="Редактировать">${icon('edit')}</button>
     <button class="icon-btn" onclick="deleteHealth('${h.id}')" title="Удалить">${icon('trash')}</button>
   </div>`;
 }
 
-/* DIALOG: COMPLETE ACTION (Сделано -> Продлить ИЛИ Новый препарат) */
+/* 6. ANALYTICS PAGE */
+function renderAnalyticsPage(){
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Питание и Вес</div><div class="page-sub">Контроль физических показателей</div></div>
+  </div>
+  <div class="card">
+    <h3>Динамика веса</h3>
+    <div style="height:250px; position:relative; margin-top:15px;">
+      <canvas id="weightChart"></canvas>
+    </div>
+  </div>`;
+}
+
+function initAnalyticsCharts(){
+  const ctx = document.getElementById('weightChart');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май'],
+      datasets: [{
+        label: 'Вес (кг)',
+        data: [9.5, 9.8, 10.0, 10.1, 10.0],
+        borderColor: '#4B6B4A',
+        backgroundColor: 'rgba(75,107,74,0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+/* 7. VETS PAGE */
+function renderVetsPage(){
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Ветеринарные врачи и клиники</div><div class="page-sub">Контакты специалистов</div></div>
+    <button class="btn btn-primary" onclick="openVetModal()">${icon('plus')} Добавить контакт</button>
+  </div>
+  <div class="card">
+    ${state.vets.length ? state.vets.map(v => `
+      <div class="list-row">
+        <div class="row-main">
+          <div class="row-title">${v.name} (${v.clinic || 'Клиника'})</div>
+          <div class="row-sub">Тел: ${v.phone || '—'} · ${v.note || ''}</div>
+        </div>
+        <button class="icon-btn" onclick="deleteVet('${v.id}')">${icon('trash')}</button>
+      </div>
+    `).join('') : '<div class="empty-note">Контакты не добавлены.</div>'}
+  </div>`;
+}
+
+/* DIALOGS & MODALS */
+
 function openCompleteDialog(id){
   const item = state.healthEvents.find(h => h.id === id);
   if(!item) return;
@@ -239,19 +398,19 @@ function openCompleteDialog(id){
   currentModal = () => `
   <div class="overlay" onclick="if(event.target===this) closeModal()">
     <div class="modal">
-      <h3>Отметить выполнение: ${item.title}</h3>
+      <h3>Отметить выполнение</h3>
       <p style="font-size:13px; color:var(--ink-soft); margin-top:-10px; margin-bottom:16px;">
-        Выберите, как поступить с повторной обработкой/прививкой:
+        Выполняется процедура: <strong>${item.title || 'Процедура'}</strong>
       </p>
 
       <div class="action-card-option" onclick="processCompleteOption('${id}', 'extend')">
-        <h4>1. Продлить этим же препаратом («${item.title}»)</h4>
-        <p>Текущая запись отправится в историю с сегодняшней датой, а для «${item.title}» отсчитается новый срок (+${item.validDays||30} дней).</p>
+        <h4>1. Продлить текущим препаратом (${item.title || 'Текущий'})</h4>
+        <p>Текущая запись отправится в историю, а в активные отсчитается новый период (+${item.validDays||30} дн.).</p>
       </div>
 
       <div class="action-card-option" onclick="processCompleteOption('${id}', 'new')">
-        <h4>2. Сделать другой препарат / изменить параметры</h4>
-        <p>Запись «${item.title}» закроется в историю, и сразу откроется форма для ввода нового названия и срока.</p>
+        <h4>2. Ввести другой препарат / зафиксировать новые данные</h4>
+        <p>Запись закроется в историю, и откроется форма для ввода наименования и срока нового препарата.</p>
       </div>
 
       <div class="modal-actions">
@@ -267,12 +426,9 @@ function processCompleteOption(id, choice){
   if(!item) return;
 
   const today = todayISO();
-
-  // Archive existing record as history log
   item.status = 'archived';
 
   if(choice === 'extend'){
-    // Create new cycle with exact same params
     const newNextDate = addDays(today, item.validDays || 30);
     state.healthEvents.push({
       ...item,
@@ -284,7 +440,6 @@ function processCompleteOption(id, choice){
     closeModal();
   } else if(choice === 'new'){
     closeModal();
-    // Open creation modal populated with base pet info, but clear title
     openHealthModal(null, item.type, {
       petId: item.petId,
       group: item.group,
@@ -294,19 +449,18 @@ function processCompleteOption(id, choice){
   }
 }
 
-/* MODAL: ADD / EDIT HEALTH RECORD */
-function openHealthModal(id = null, defaultType = 'vaccination', initialData = {}){
+function openHealthModal(id = null, defaultType = 'вакцинация', initialData = {}){
   const editing = id ? state.healthEvents.find(h => h.id === id) : null;
   const item = editing || {
     id: null,
     petId: initialData.petId || (state.pets[0] ? state.pets[0].id : ''),
     type: defaultType,
     subtype: initialData.subtype || 'от блох и клещей',
-    group: initialData.group || 'комплексная (кошки)',
+    group: initialData.group || 'комплексная',
     title: '',
     brand: '',
     date: todayISO(),
-    validDays: defaultType === 'vaccination' ? 365 : 30,
+    validDays: defaultType === 'вакцинация' ? 365 : 30,
     vet: '',
     comment: ''
   };
@@ -314,40 +468,36 @@ function openHealthModal(id = null, defaultType = 'vaccination', initialData = {
   currentModal = () => `
   <div class="overlay" onclick="if(event.target===this) closeModal()">
     <div class="modal">
-      <h3>${editing ? 'Редактировать' : 'Добавить'}: ${item.type === 'treatment' ? 'Обработку' : 'Прививку'}</h3>
-      <form id="healthForm" onsubmit="saveHealthForm(event, '${item.id || ''}', '${item.type}')">
+      <h3>${editing ? 'Редактировать' : 'Добавить'}: ${item.type}</h3>
+      <form onsubmit="saveHealthForm(event, '${item.id || ''}', '${item.type}')">
         <div class="field">
-          <label>Животное</label>
+          <label>Питомец</label>
           <select name="petId">
             ${state.pets.map(p => `<option value="${p.id}" ${item.petId === p.id ? 'selected' : ''}>${p.name}</option>`).join('')}
           </select>
         </div>
 
-        ${item.type === 'treatment' ? `
+        ${item.type === 'обработка' ? `
           <div class="field">
-            <label>Тип паразитов</label>
-            <select name="subtype">
-              ${['от блох','от клещей','от блох и клещей','от глистов','от москитов','другое'].map(t => `<option ${item.subtype===t?'selected':''}>${t}</option>`).join('')}
-            </select>
+            <label>Тип обработки</label>
+            <input name="subtype" value="${item.subtype || ''}" placeholder="Например: от блох и клещей, от гельминтов">
           </div>
         ` : `
           <div class="field">
-            <label>Группа / от чего прививка</label>
-            <select name="group">
-              ${['бешенство','комплексная (кошки)','комплексная (собаки)','лишай','лептоспироз','другое'].map(g => `<option ${item.group===g?'selected':''}>${g}</option>`).join('')}
-            </select>
+            <label>Категория / Группа</label>
+            <input name="group" value="${item.group || ''}" placeholder="Например: бешенство, комплексная">
           </div>
         `}
 
         <div class="field">
           <label>Название препарата</label>
-          <input name="title" value="${item.title || ''}" placeholder="Например: Бравекто, Симпарика, Нобивак" required>
+          <input name="title" value="${item.title || ''}" placeholder="Введите наименование препарата" required>
         </div>
 
-        ${item.type === 'treatment' ? `
+        ${item.type === 'обработка' ? `
           <div class="field">
-            <label>Производитель / бренд</label>
-            <input name="brand" value="${item.brand || ''}" placeholder="Zoetis, Bayer и т.д.">
+            <label>Бренд / Производитель (опционально)</label>
+            <input name="brand" value="${item.brand || ''}" placeholder="Производитель">
           </div>
         ` : ''}
 
@@ -358,19 +508,19 @@ function openHealthModal(id = null, defaultType = 'vaccination', initialData = {
           </div>
           <div class="field">
             <label>Срок действия (дней)</label>
-            <input type="number" name="validDays" value="${item.validDays || (item.type==='vaccination'?365:30)}" required>
+            <input type="number" name="validDays" value="${item.validDays || 30}" required>
           </div>
         </div>
 
-        ${item.type === 'vaccination' ? `
+        ${item.type === 'вакцинация' ? `
           <div class="field">
-            <label>Ветеринар / клиника</label>
-            <input name="vet" value="${item.vet || ''}">
+            <label>Ветеринар / Клиника</label>
+            <input name="vet" value="${item.vet || ''}" placeholder="ФИО врача или клиника">
           </div>
         ` : ''}
 
         <div class="field">
-          <label>Заметка / комментарий</label>
+          <label>Заметки / Комментарий</label>
           <textarea name="comment" rows="2">${item.comment || ''}</textarea>
         </div>
 
@@ -394,7 +544,6 @@ function saveHealthForm(e, id, type){
   const nextDateVal = addDays(dateVal, validDaysVal);
 
   if(id){
-    // Update existing record
     const item = state.healthEvents.find(h => h.id === id);
     if(item){
       item.petId = formData.get('petId');
@@ -403,7 +552,7 @@ function saveHealthForm(e, id, type){
       item.validDays = validDaysVal;
       item.nextDate = nextDateVal;
       item.comment = formData.get('comment');
-      if(type === 'treatment'){
+      if(type === 'обработка'){
         item.subtype = formData.get('subtype');
         item.brand = formData.get('brand');
       } else {
@@ -412,7 +561,6 @@ function saveHealthForm(e, id, type){
       }
     }
   } else {
-    // Create new record
     const newItem = {
       id: uid(),
       petId: formData.get('petId'),
@@ -424,7 +572,7 @@ function saveHealthForm(e, id, type){
       status: 'active',
       comment: formData.get('comment')
     };
-    if(type === 'treatment'){
+    if(type === 'обработка'){
       newItem.subtype = formData.get('subtype');
       newItem.brand = formData.get('brand');
     } else {
@@ -444,12 +592,141 @@ function deleteHealth(id){
   }
 }
 
+/* MODAL: PET */
+function openPetModal(id = null){
+  const editing = id ? state.pets.find(p => p.id === id) : null;
+  const item = editing || { id: null, name: '', species: 'Собака', breed: '', birth: todayISO(), weight: '' };
+
+  currentModal = () => `
+  <div class="overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <h3>${editing ? 'Редактировать' : 'Добавить'} питомца</h3>
+      <form onsubmit="savePetForm(event, '${item.id || ''}')">
+        <div class="field">
+          <label>Кличка</label>
+          <input name="name" value="${item.name}" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Вид</label>
+            <input name="species" value="${item.species}" placeholder="Собака, Кошка и т.д.">
+          </div>
+          <div class="field">
+            <label>Порода</label>
+            <input name="breed" value="${item.breed}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Дата рождения</label>
+            <input type="date" name="birth" value="${item.birth}">
+          </div>
+          <div class="field">
+            <label>Вес (кг)</label>
+            <input type="number" step="0.1" name="weight" value="${item.weight}">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  render();
+}
+
+function savePetForm(e, id){
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  if(id){
+    const p = state.pets.find(x => x.id === id);
+    if(p){
+      p.name = formData.get('name');
+      p.species = formData.get('species');
+      p.breed = formData.get('breed');
+      p.birth = formData.get('birth');
+      p.weight = formData.get('weight');
+    }
+  } else {
+    state.pets.push({
+      id: uid(),
+      name: formData.get('name'),
+      species: formData.get('species'),
+      breed: formData.get('breed'),
+      birth: formData.get('birth'),
+      weight: formData.get('weight')
+    });
+  }
+  closeModal();
+}
+
+function deletePet(id){
+  if(confirm('Удалить питомца?')){
+    state.pets = state.pets.filter(p => p.id !== id);
+    render();
+  }
+}
+
+/* MODAL: VET */
+function openVetModal(){
+  currentModal = () => `
+  <div class="overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <h3>Добавить контакты ветеринара</h3>
+      <form onsubmit="saveVetForm(event)">
+        <div class="field">
+          <label>ФИО / Врач</label>
+          <input name="name" required>
+        </div>
+        <div class="field">
+          <label>Клиника</label>
+          <input name="clinic">
+        </div>
+        <div class="field">
+          <label>Телефон</label>
+          <input name="phone">
+        </div>
+        <div class="field">
+          <label>Заметка</label>
+          <textarea name="note" rows="2"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  render();
+}
+
+function saveVetForm(e){
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  state.vets.push({
+    id: uid(),
+    name: formData.get('name'),
+    clinic: formData.get('clinic'),
+    phone: formData.get('phone'),
+    note: formData.get('note')
+  });
+  closeModal();
+}
+
+function deleteVet(id){
+  if(confirm('Удалить контакт?')){
+    state.vets = state.vets.filter(v => v.id !== id);
+    render();
+  }
+}
+
 function closeModal(){
   currentModal = null;
   render();
 }
 
-// Initial render
+// Запуск приложения
 render();
 </script>
 </body>
