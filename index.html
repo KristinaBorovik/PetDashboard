@@ -29,6 +29,8 @@
   --sky-tint:#DEE9EC;
   --red:#A5433A;
   --red-tint:#F4DEDA;
+  --purple:#7A5AA8;
+  --purple-tint:#E9E2F3;
   --radius:14px;
   --radius-sm:9px;
   --shadow:0 1px 2px rgba(34,48,31,0.06), 0 6px 20px -8px rgba(34,48,31,0.15);
@@ -135,7 +137,7 @@ button{font-family:inherit;cursor:pointer;}
 .list-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);}
 .list-row:last-child{border-bottom:none;}
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dot-moss{background:var(--moss);} .dot-clay{background:var(--clay);} .dot-gold{background:var(--gold);} .dot-sky{background:var(--sky);} .dot-red{background:var(--red);}
+.dot-moss{background:var(--moss);} .dot-clay{background:var(--clay);} .dot-gold{background:var(--gold);} .dot-sky{background:var(--sky);} .dot-red{background:var(--red);} .dot-purple{background:var(--purple);}
 .row-main{flex:1;min-width:0;}
 .row-title{font-weight:600;font-size:13px;}
 .row-sub{color:var(--ink-soft);font-size:11.5px;margin-top:1px;}
@@ -146,6 +148,7 @@ button{font-family:inherit;cursor:pointer;}
 .pill-gold{background:var(--gold-tint);color:var(--gold);}
 .pill-sky{background:var(--sky-tint);color:var(--sky);}
 .pill-red{background:var(--red-tint);color:var(--red);}
+.pill-purple{background:var(--purple-tint);color:var(--purple);}
 .empty-note{color:var(--ink-soft);font-size:12.5px;padding:10px 2px;}
 
 /* progress */
@@ -170,7 +173,7 @@ button{font-family:inherit;cursor:pointer;}
 .field textarea{resize:vertical;min-height:60px;}
 .field-row{display:flex;gap:10px;}
 .field-row>*{flex:1;}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap;}
 .close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:var(--ink-soft);}
 
 /* calendar */
@@ -205,6 +208,13 @@ button{font-family:inherit;cursor:pointer;}
 .icon-btn{background:none;border:none;padding:5px;border-radius:6px;color:var(--ink-soft);}
 .icon-btn:hover{background:var(--paper-2);color:var(--ink);}
 .icon-btn svg{width:15px;height:15px;stroke:currentColor;}
+
+.chip-select{display:flex;flex-wrap:wrap;gap:6px;}
+.chip-opt{padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink-soft);}
+.chip-opt.active{background:var(--moss);border-color:var(--moss);color:#fff;}
+
+.photo-pick{display:flex;align-items:center;gap:10px;}
+.photo-pick .preview{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--paper-2);flex-shrink:0;}
 
 @media print{
   .sidebar,.topbar,.quickbar,.tabbar,.no-print{display:none !important;}
@@ -244,7 +254,11 @@ const ICONS = {
   print:'<rect x="4" y="7" width="12" height="7" rx="1"/><path d="M6 7V3h8v4"/><path d="M6 14v3h8v-3"/>',
   file:'<path d="M6 2h6l3 3v13H6V2Z"/><path d="M12 2v3h3"/>',
   scale:'<path d="M10 3v14M4 6h12M4 6l-2 5a3 3 0 0 0 4 0L4 6Zm12 0l-2 5a3 3 0 0 0 4 0l-2-5Z"/>',
-  settings:'<circle cx="10" cy="10" r="2.6"/><path d="M10 2v2.2M10 15.8V18M4 5l1.5 1.5M14.5 13.5 16 15M2 10h2.2M15.8 10H18M4 15l1.5-1.5M14.5 6.5 16 5"/>'
+  settings:'<circle cx="10" cy="10" r="2.6"/><path d="M10 2v2.2M10 15.8V18M4 5l1.5 1.5M14.5 13.5 16 15M2 10h2.2M15.8 10H18M4 15l1.5-1.5M14.5 6.5 16 5"/>',
+  syringe:'<path d="M13 3l4 4-2 2-4-4 2-2Z"/><path d="M13.5 5.5 6 13v3H3v-3l7.5-7.5"/><path d="M9 9l2 2M7 11l2 2"/>',
+  drop:'<path d="M10 3s5 5.8 5 9.2A5 5 0 1 1 5 12.2C5 8.8 10 3 10 3Z"/>',
+  skip:'<path d="M5 4l8 6-8 6V4Z"/><path d="M14 4v12"/>',
+  cake:'<path d="M3 17v-5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"/><path d="M3 13c1 1 2 1 3 0s2-1 3 0 2 1 3 0 2-1 3 0 2 1 3 0"/><path d="M10 6V3"/><path d="M10 3c-.6 0-1-.5-1-1s.4-1 1-1 1 .5 1 1-.4 1-1 1Z"/>'
 };
 function icon(name){return `<svg viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;}
 
@@ -274,6 +288,56 @@ const todayISO = ()=> new Date().toISOString().slice(0,10);
 function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
 function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}); }
 function fmtMoney(n){ return (Math.round(n*100)/100).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2})+' €'; }
+function monthNameRu(date){
+  const d = date||new Date();
+  const s = d.toLocaleDateString('ru-RU',{month:'long'});
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+function pluralRu(n,f1,f2,f5){
+  n = Math.abs(n)%100;
+  const n1 = n%10;
+  if(n>10 && n<20) return f5;
+  if(n1>1 && n1<5) return f2;
+  if(n1===1) return f1;
+  return f5;
+}
+function ageStr(dob){
+  if(!dob) return '—';
+  const birth = new Date(dob+'T00:00:00');
+  const now = new Date();
+  if(isNaN(birth)) return '—';
+  let years = now.getFullYear()-birth.getFullYear();
+  let months = now.getMonth()-birth.getMonth();
+  if(now.getDate()<birth.getDate()) months--;
+  if(months<0){ years--; months+=12; }
+  if(years<0) years=0;
+  const parts = [];
+  if(years>0) parts.push(years+' '+pluralRu(years,'год','года','лет'));
+  if(months>0 || years===0) parts.push(months+' '+pluralRu(months,'месяц','месяца','месяцев'));
+  return parts.join(' ') || 'меньше месяца';
+}
+function resizeImageFile(file, maxSize=360, quality=0.82){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onerror = ()=>reject(new Error('read failed'));
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = ()=>reject(new Error('image load failed'));
+      img.onload = ()=>{
+        let {width,height} = img;
+        if(width>height){ if(width>maxSize){ height = Math.round(height*maxSize/width); width = maxSize; } }
+        else { if(height>maxSize){ width = Math.round(width*maxSize/height); height = maxSize; } }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,width,height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 /* helpers to keep budget/animalExpenses and petFunds as clean 0..n arrays,
    matching the structure already used by the "Наш Бюджет" site */
@@ -320,9 +384,9 @@ const DEFAULT_STATE = ()=>({
     {id:uid(),petId:'p1',date:'2026-08-14',weight:4.2,comment:''}
   ],
   healthEvents:[
-    {id:uid(),petId:'p1',type:'вакцинация',title:'Комплексная вакцина',date:'2025-09-10',description:'',validDays:365,nextDate:'2026-09-10',comment:'',vet:'Клиника «Ковчег»'},
-    {id:uid(),petId:'p1',type:'обработка',subtype:'от паразитов',title:'Капли от блох и клещей',date:'2026-07-15',description:'',validDays:30,nextDate:'2026-08-19',comment:''},
-    {id:uid(),petId:'p2',type:'обработка',subtype:'от глистов',title:'Таблетка от глистов',date:'2026-07-20',description:'',validDays:90,nextDate:'2026-10-18',comment:''}
+    {id:uid(),petId:'p1',type:'вакцинация',title:'Комплексная вакцина',date:'2025-09-10',description:'',group:'комплексная',validDays:365,nextDate:'2026-09-10',comment:'',vet:'Клиника «Ковчег»'},
+    {id:uid(),petId:'p1',type:'обработка',subtype:'от блох и клещей',title:'Капли от блох и клещей',brand:'',date:'2026-07-15',description:'',validDays:30,nextDate:'2026-08-19',comment:''},
+    {id:uid(),petId:'p2',type:'обработка',subtype:'от глистов',title:'Таблетка от глистов',brand:'',date:'2026-07-20',description:'',validDays:90,nextDate:'2026-10-18',comment:''}
   ],
   vetVisits:[
     {id:uid(),petId:'p1',date:'2026-05-02',clinic:'Клиника «Ковчег»',reason:'Плановый осмотр',diagnosis:'Здорова',recommendations:'Контроль веса',cost:25}
@@ -335,7 +399,7 @@ const DEFAULT_STATE = ()=>({
     {id:uid(),petId:'p1',type:'вакцинация',title:'Прививка — Булочка',date:'2026-09-10',description:'Комплексная вакцина',repeatEveryDays:365,done:false}
   ],
   supplies:[
-    {id:uid(),name:'Корм сухой',petId:'all',currentStock:4,unit:'кг',avgConsumption:0.25,lastPurchaseDate:'2026-08-01',lastPurchaseQty:5,lastPurchaseCost:32,history:[{date:'2026-08-01',qty:5,cost:32}]},
+    {id:uid(),name:'Корм сухой',petId:'group:cats',currentStock:4,unit:'кг',avgConsumption:0.25,lastPurchaseDate:'2026-08-01',lastPurchaseQty:5,lastPurchaseCost:32,history:[{date:'2026-08-01',qty:5,cost:32}]},
     {id:uid(),name:'Наполнитель',petId:'p1',currentStock:2,unit:'кг',avgConsumption:0.6,lastPurchaseDate:'2026-08-05',lastPurchaseQty:10,lastPurchaseCost:14,history:[{date:'2026-08-05',qty:10,cost:14}]}
   ],
   reminderSettings:{offsets:[30,14,7,3,1]},
@@ -378,14 +442,22 @@ async function loadState(){
     render();
   });
 
-  // live sync with the shared budget app: копилки «Фонд животных»
+  // live sync with the shared budget app: копилки «Фонд животных» (petFunds)
+  // real schema: color, currentSaved, cycleDays, emoji, id, lastPurchaseDate,
+  // linkedPlanId, monthlyAmount, name, purchaseHistory, totalCost
   fundsRef.on('value', snap=>{
     const arr = arrFromSnapshot(snap);
     state.savings = arr.map(f=>({
-      id: f.id, name: f.name, goal: f.goal!=null? Number(f.goal): null,
-      current: Number(f.currentSaved)||0, monthly: Number(f.monthlyAmount)||0,
-      cycleDays: f.cycleDays, emoji: f.emoji, color: f.color,
-      createdAt: f.lastPurchaseDate||todayISO(), history: f.history||[]
+      id: f.id, name: f.name || 'Без названия',
+      current: Number(f.currentSaved)||0,
+      monthly: Number(f.monthlyAmount)||0,
+      cycleDays: f.cycleDays||null,
+      goal: Number(f.totalCost)>0 ? Number(f.totalCost) : null,
+      totalCost: Number(f.totalCost)||0,
+      emoji: f.emoji, color: f.color,
+      lastPurchaseDate: f.lastPurchaseDate||null,
+      linkedPlanId: f.linkedPlanId||null,
+      history: f.purchaseHistory||[]
     }));
     render();
   });
@@ -476,6 +548,7 @@ function typeDot(type){
   if(type==='обработка') return 'dot-clay';
   if(type==='вакцинация') return 'dot-moss';
   if(type==='ветеринар') return 'dot-sky';
+  if(type==='день_рождения') return 'dot-purple';
   return 'dot-gold';
 }
 
@@ -485,9 +558,22 @@ function lowSupplies(){
     return {...s, daysLeft};
   }).sort((a,b)=>a.daysLeft-b.daysLeft);
 }
+function supplyTargetLabel(petId){
+  if(petId==='all') return 'Все животные';
+  if(petId==='group:dogs') return 'Собаки';
+  if(petId==='group:cats') return 'Кошки';
+  if(petId==='group:kittens') return 'Котята';
+  return petById(petId)?.name || '—';
+}
 function monthExpenses(petId=null){
-  const now=new Date(); const ym = now.toISOString().slice(0,7);
-  return state.expenses.filter(e=> e.date.startsWith(ym) && (!petId || e.petId===petId)).reduce((s,e)=>s+Number(e.amount),0);
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  return state.expenses.filter(e=>{
+    if(!e.date) return false;
+    const d = new Date(e.date+'T00:00:00');
+    if(isNaN(d)) return false;
+    return d.getFullYear()===y && d.getMonth()===m && (!petId || e.petId===petId);
+  }).reduce((s,e)=>s+(Number(e.amount)||0),0);
 }
 function periodExpenses(days,petId=null){
   const cutoff = addDays(todayISO(), -days);
@@ -505,6 +591,8 @@ function render(){
       ${route.tab==='pet'?renderPetDetail():''}
       ${route.tab==='calendar'?renderCalendar():''}
       ${route.tab==='reminders'?renderReminders():''}
+      ${route.tab==='vaccinations'?renderVaccinationsPage():''}
+      ${route.tab==='treatments'?renderTreatmentsPage():''}
       ${route.tab==='supplies'?renderSupplies():''}
       ${route.tab==='expenses'?renderExpenses():''}
       ${route.tab==='savings'?renderSavings():''}
@@ -521,6 +609,8 @@ function sidebar(){
     ['pets','paw','Животные'],
     ['calendar','cal','Календарь'],
     ['reminders','bell','Напоминания', upcomingItems().filter(i=>daysBetween(todayISO(),i.date)<=7 && daysBetween(todayISO(),i.date)>=0).length],
+    ['vaccinations','syringe','Прививки'],
+    ['treatments','drop','Обработки'],
     ['supplies','box','Запасы', lowSupplies().filter(s=>s.daysLeft<=7).length],
     ['expenses','wallet','Расходы'],
     ['savings','piggy','Копилки'],
@@ -563,7 +653,7 @@ function renderDashboard(){
   const low = lowSupplies().filter(s=>s.daysLeft<=21).slice(0,4);
   const spend = monthExpenses();
   const savingsTotal = state.savings.reduce((s,x)=>s+x.current,0);
-  const savingsGoalTotal = state.savings.reduce((s,x)=>s+x.goal,0);
+  const savingsGoalTotal = state.savings.reduce((s,x)=>s+(x.goal||0),0);
   const warnings = buildWarnings();
 
   return `
@@ -600,7 +690,7 @@ function renderDashboard(){
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title"><h3>Расходы за месяц</h3></div>
         <div class="stat-big">${fmtMoney(spend)}</div>
-        <div class="stat-label">Август · по всем животным</div>
+        <div class="stat-label">${monthNameRu()} · по всем животным</div>
       </div>
       <div class="card">
         <div class="card-title"><h3>Накопления на животных</h3></div>
@@ -615,7 +705,7 @@ function renderDashboard(){
       <div class="card-title"><h3>Скоро закончится</h3><button class="btn btn-sm" data-nav="supplies">Запасы →</button></div>
       ${low.length? low.map(s=>`<div class="list-row">
         <span class="dot ${s.daysLeft<=7?'dot-red':'dot-gold'}"></span>
-        <div class="row-main"><div class="row-title">${s.name}</div><div class="row-sub">осталось ${s.currentStock} ${s.unit} · расход ~${s.avgConsumption} ${s.unit}/день</div></div>
+        <div class="row-main"><div class="row-title">${s.name}</div><div class="row-sub">${supplyTargetLabel(s.petId)} · осталось ${s.currentStock} ${s.unit} · расход ~${s.avgConsumption} ${s.unit}/день</div></div>
         <div class="row-right">${s.daysLeft<999? 'через '+s.daysLeft+' дн.':'—'}</div>
       </div>`).join('') : `<div class="empty-note">Все запасы в норме.</div>`}
     </div>
@@ -630,7 +720,7 @@ function buildWarnings(){
     if(d>=0 && d<=1) w.push(`«${it.title}» — ${d===0?'сегодня':'завтра'}.`);
   });
   lowSupplies().forEach(s=>{ if(s.daysLeft<=3) w.push(`«${s.name}» почти закончился — хватит примерно на ${s.daysLeft} дн.`); });
-  state.savings.forEach(sv=>{ const left = sv.goal-sv.current; if(left>0 && left<=30) w.push(`До цели копилки «${sv.name}» осталось всего ${fmtMoney(left)}.`); });
+  state.savings.forEach(sv=>{ if(sv.goal){ const left = sv.goal-sv.current; if(left>0 && left<=30) w.push(`До цели копилки «${sv.name}» осталось всего ${fmtMoney(left)}.`); } });
   return w.slice(0,4);
 }
 function quickActions(){
@@ -647,18 +737,22 @@ function searchBox(){
 }
 function petCardMini(p){
   const nextItem = upcomingItems().find(i=>i.petId===p.id);
-  const age = p.dob? Math.floor(daysBetween(p.dob, todayISO())/365.25)+' лет' : '';
   return `<div class="pet-card" data-open-pet="${p.id}">
     <div class="pet-photo">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}
       ${p.status==='передержка'?'<span class="status-chip">На передержке</span>':''}
     </div>
     <div class="pet-info">
       <div class="name">${p.name}</div>
-      <div class="meta">${p.species}${p.breed?' · '+p.breed:''}${age?' · '+age:''}</div>
+      <div class="meta">${p.species}${p.breed?' · '+p.breed:''}${p.dob?' · '+ageStr(p.dob):''}</div>
       <div class="stats-row"><span>Вес: <b>${p.weight||'—'} кг</b></span></div>
       ${nextItem?`<div class="row-sub" style="margin-top:8px;">Ближайшее: ${nextItem.title.split(' — ')[0]}, ${fmtDate(nextItem.date)}</div>`:''}
     </div>
   </div>`;
+}
+function neuterLabel(p){
+  if(p.neutered==='да') return (p.sex==='Самец'?'Кастрирован':'Стерилизована')+(p.neuteredDate?' ('+fmtDate(p.neuteredDate)+')':'');
+  if(p.neutered==='нет') return p.sex==='Самец'?'Не кастрирован':'Не стерилизована';
+  return 'Неизвестно';
 }
 function speciesEmoji(sp){
   const map={'Кошка':'🐈','Собака':'🐕','Кролик':'🐇','Птица':'🐦','Рыба':'🐟','Хомяк':'🐹','Черепаха':'🐢'};
@@ -687,7 +781,7 @@ function renderPetDetail(){
     <div>
       <button class="btn btn-ghost btn-sm" data-nav="pets">← Все животные</button>
       <div class="page-title" style="margin-top:6px;">${p.name}</div>
-      <div class="page-sub">${p.species}${p.breed?' · '+p.breed:''} · ${p.sex||''} ${p.status==='передержка'?' · <span class="pill pill-clay">На передержке</span>':''}</div>
+      <div class="page-sub">${p.species}${p.breed?' · '+p.breed:''} · ${p.sex||''} · ${ageStr(p.dob)} ${p.status==='передержка'?' · <span class="pill pill-clay">На передержке</span>':''}</div>
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-sm" data-edit-pet="${p.id}">${icon('edit')} Редактировать</button>
@@ -714,7 +808,6 @@ function renderPetTab(p){
   }
 }
 function petOverview(p){
-  const age = p.dob? Math.floor(daysBetween(p.dob, todayISO())/365.25)+' лет' : '—';
   const up = upcomingItems().filter(i=>i.petId===p.id).slice(0,5);
   const lastWeight = state.weightLogs.filter(w=>w.petId===p.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
   return `
@@ -723,10 +816,11 @@ function petOverview(p){
       <div class="card-title"><h3>Карточка</h3></div>
       <div class="pet-photo" style="border-radius:10px;margin-bottom:12px;">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}</div>
       <div class="two-col-stats">
-        <div><div class="stat-label">Дата рождения</div><div class="mono">${fmtDate(p.dob)} (${age})</div></div>
+        <div><div class="stat-label">Дата рождения</div><div class="mono">${fmtDate(p.dob)} (${ageStr(p.dob)})</div></div>
         <div><div class="stat-label">Пол</div><div>${p.sex||'—'}</div></div>
         <div><div class="stat-label">Окрас</div><div>${p.color||'—'}</div></div>
         <div><div class="stat-label">Текущий вес</div><div class="mono">${lastWeight?lastWeight.weight:p.weight||'—'} кг</div></div>
+        <div><div class="stat-label">${p.sex==='Самец'?'Кастрация':'Стерилизация'}</div><div>${neuterLabel(p)}</div></div>
       </div>
       ${p.traits?`<div style="margin-top:12px;"><div class="stat-label">Особенности</div><div>${p.traits}</div></div>`:''}
       ${p.description?`<div style="margin-top:8px;"><div class="stat-label">Описание</div><div>${p.description}</div></div>`:''}
@@ -773,28 +867,37 @@ function petTreatments(p){
   return `
   <div class="section-head"><h2>Обработки от паразитов</h2><button class="btn btn-sm btn-primary" data-quick="treatment" data-pet="${p.id}">${icon('plus')} Добавить обработку</button></div>
   <div class="card">
-    ${list.length? list.map(h=>`<div class="list-row">
-      <span class="dot dot-clay"></span>
-      <div class="row-main"><div class="row-title">${h.title} <span class="pill pill-clay">${h.subtype||'обработка'}</span></div>
-        <div class="row-sub">Дата: ${fmtDate(h.date)} · Срок действия: ${h.validDays||'—'} дн.</div></div>
-      <div class="row-right">след.: ${fmtDate(h.nextDate)}</div>
-      <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
-    </div>`).join('') : `<div class="empty-note">Обработок пока нет.</div>`}
+    ${list.length? list.map(h=>treatmentRow(h)).join('') : `<div class="empty-note">Обработок пока нет.</div>`}
   </div>`;
+}
+function treatmentRow(h){
+  const p = petById(h.petId);
+  return `<div class="list-row">
+      <span class="dot dot-clay"></span>
+      <div class="row-main"><div class="row-title">${h.title||'Обработка'} <span class="pill pill-clay">${h.subtype||'обработка'}</span>${p?` <span class="pill pill-moss">${p.name}</span>`:''}</div>
+        <div class="row-sub">Дата: ${fmtDate(h.date)} · Срок действия: ${h.validDays||'—'} дн.${h.brand?' · Производитель: '+h.brand:''}${h.comment?' · '+h.comment:''}</div></div>
+      <div class="row-right">след.: ${fmtDate(h.nextDate)}</div>
+      <button class="icon-btn" data-skip-health="${h.id}" title="Пропустить обработку">${icon('skip')}</button>
+      <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
+    </div>`;
 }
 function petVaccinations(p){
   const list = state.healthEvents.filter(h=>h.petId===p.id && h.type==='вакцинация').sort((a,b)=>b.date.localeCompare(a.date));
   return `
   <div class="section-head"><h2>Прививки</h2><button class="btn btn-sm btn-primary" data-quick="vaccination" data-pet="${p.id}">${icon('plus')} Добавить прививку</button></div>
   <div class="card">
-    ${list.length? list.map(h=>`<div class="list-row">
+    ${list.length? list.map(h=>vaccinationRow(h)).join('') : `<div class="empty-note">Прививок пока нет.</div>`}
+  </div>`;
+}
+function vaccinationRow(h){
+  const p = petById(h.petId);
+  return `<div class="list-row">
       <span class="dot dot-moss"></span>
-      <div class="row-main"><div class="row-title">${h.title}</div>
-        <div class="row-sub">Дата: ${fmtDate(h.date)}${h.vet?' · '+h.vet:''}</div></div>
+      <div class="row-main"><div class="row-title">${h.title} ${h.group?`<span class="pill pill-purple">${h.group}</span>`:''}${p?` <span class="pill pill-moss">${p.name}</span>`:''}</div>
+        <div class="row-sub">Дата: ${fmtDate(h.date)}${h.vet?' · '+h.vet:''}${h.comment?' · '+h.comment:''}</div></div>
       <div class="row-right">след.: ${fmtDate(h.nextDate)}</div>
       <button class="icon-btn" data-del-health="${h.id}">${icon('trash')}</button>
-    </div>`).join('') : `<div class="empty-note">Прививок пока нет.</div>`}
-  </div>`;
+    </div>`;
 }
 
 /* ---- weight tab ---- */
@@ -941,6 +1044,37 @@ function petHistory(p){
   </div>`;
 }
 
+/* ============ VACCINATIONS (global page) ============ */
+function renderVaccinationsPage(){
+  const list = state.healthEvents.filter(h=>h.type==='вакцинация').sort((a,b)=>(a.nextDate||a.date).localeCompare(b.nextDate||b.date));
+  const groups = ['Все', ...Array.from(new Set(list.map(h=>h.group).filter(Boolean)))];
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Прививки</div><div class="page-sub">Все животные · что, когда и когда следующая</div></div>
+    <button class="btn btn-primary" data-quick="vaccination">${icon('plus')} Добавить прививку</button>
+  </div>
+  <div class="card">
+    ${list.length? list.map(h=>vaccinationRow(h)).join('') : `<div class="empty-note">Прививок пока не введено. Добавляйте их вручную по каждому животному.</div>`}
+  </div>
+  ${modalHost()}
+  `;
+}
+
+/* ============ TREATMENTS (global page) ============ */
+function renderTreatmentsPage(){
+  const list = state.healthEvents.filter(h=>h.type==='обработка').sort((a,b)=>(a.nextDate||a.date).localeCompare(b.nextDate||b.date));
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Обработки от паразитов</div><div class="page-sub">Блохи, клещи, глисты, москиты — по каждому животному</div></div>
+    <button class="btn btn-primary" data-quick="treatment">${icon('plus')} Добавить обработку</button>
+  </div>
+  <div class="card">
+    ${list.length? list.map(h=>treatmentRow(h)).join('') : `<div class="empty-note">Обработок пока не введено.</div>`}
+  </div>
+  ${modalHost()}
+  `;
+}
+
 /* ============ CALENDAR ============ */
 let calCursor = new Date();
 function renderCalendar(){
@@ -960,13 +1094,21 @@ function renderCalendar(){
   });
   state.healthEvents.forEach(h=>{ if(h.nextDate){ if(!monthEvents[h.nextDate]) monthEvents[h.nextDate]=[]; monthEvents[h.nextDate].push({title:h.title,type:h.type,petId:h.petId}); }});
   state.vetVisits.forEach(v=>{ if(!monthEvents[v.date]) monthEvents[v.date]=[]; monthEvents[v.date].push({title:'Визит: '+(petById(v.petId)?.name||''),type:'ветеринар',petId:v.petId}); });
+  activePets().forEach(p=>{
+    if(!p.dob) return;
+    const bd = new Date(p.dob+'T00:00:00');
+    if(isNaN(bd) || bd.getMonth()!==m) return;
+    const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(bd.getDate()).padStart(2,'0')}`;
+    if(!monthEvents[iso]) monthEvents[iso]=[];
+    monthEvents[iso].push({title:'🎂 День рождения — '+p.name, type:'день_рождения', petId:p.id});
+  });
 
   const monthLabel = calCursor.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
   const dows = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
   return `
   <div class="topbar">
-    <div><div class="page-title">Календарь</div><div class="page-sub">Все события, связанные с животными</div></div>
+    <div><div class="page-title">Календарь</div><div class="page-sub">Все события, связанные с животными, включая дни рождения</div></div>
     <button class="btn btn-primary" data-quick="calevent">${icon('plus')} Добавить событие</button>
   </div>
   <div class="card">
@@ -994,14 +1136,13 @@ function renderCalendar(){
   `;
 }
 function typeColor(t){
-  return {'обработка':'#B5592E','вакцинация':'#4B6B4A','ветеринар':'#3E6B7C','другое':'#B9872B'}[t]||'#B9872B';
+  return {'обработка':'#B5592E','вакцинация':'#4B6B4A','ветеринар':'#3E6B7C','день_рождения':'#7A5AA8','другое':'#B9872B'}[t]||'#B9872B';
 }
 
 /* ============ REMINDERS ============ */
 function renderReminders(){
   const items = upcomingItems();
   const offsets = state.reminderSettings.offsets;
-  const grouped = offsets.map(o=>({o, items: items.filter(i=>{ const d=daysBetween(todayISO(),i.date); return d>=0 && d<=o; })}));
   return `
   <div class="topbar">
     <div><div class="page-title">Напоминания</div><div class="page-sub">Настраиваемые сроки уведомлений</div></div>
@@ -1045,6 +1186,7 @@ function renderSupplies(){
   <div class="grid grid-cards">
     ${list.map(s=>`<div class="card">
       <div class="card-title"><h3>${s.name}</h3><span class="pill ${s.daysLeft<=7?'pill-red':s.daysLeft<=14?'pill-gold':'pill-moss'}">${s.daysLeft<999? s.daysLeft+' дн.':'—'}</span></div>
+      <div class="row-sub" style="margin-bottom:6px;">${supplyTargetLabel(s.petId)}</div>
       <div class="stat-big">${s.currentStock} <span style="font-size:14px;">${s.unit}</span></div>
       <div class="stat-label">Средний расход: ${s.avgConsumption} ${s.unit}/день</div>
       <div class="row-sub" style="margin-top:8px;">Последняя покупка: ${fmtDate(s.lastPurchaseDate)} · ${s.lastPurchaseQty} ${s.unit} за ${fmtMoney(s.lastPurchaseCost||0)}</div>
@@ -1078,7 +1220,7 @@ function renderExpenses(){
   <div class="grid grid-3" style="margin-bottom:16px;">
     <div class="card"><div class="stat-label">Сегодня</div><div class="stat-big">${fmtMoney(sum(today.filter(e=>e.date===todayISO())))}</div></div>
     <div class="card"><div class="stat-label">За неделю</div><div class="stat-big">${fmtMoney(sum(week))}</div></div>
-    <div class="card"><div class="stat-label">За месяц</div><div class="stat-big">${fmtMoney(sum(month))}</div></div>
+    <div class="card"><div class="stat-label">За ${monthNameRu().toLowerCase()} (текущий месяц)</div><div class="stat-big">${fmtMoney(monthExpenses())}</div></div>
   </div>
   <div class="grid grid-2">
     <div class="card"><div class="card-title"><h3>По категориям</h3></div><canvas id="catChart" height="200"></canvas></div>
@@ -1118,11 +1260,11 @@ function drawExpenseCharts(){
 function renderSavings(){
   return `
   <div class="topbar">
-    <div><div class="page-title">Копилки для животных</div><div class="page-sub">Цели накоплений и прогресс</div></div>
+    <div><div class="page-title">Копилки для животных</div><div class="page-sub">Цели накоплений и прогресс · синхронизировано с фондом животных из бюджета</div></div>
     <button class="btn btn-primary" data-quick="savingsGoal">${icon('plus')} Новая копилка</button>
   </div>
   <div class="grid grid-cards">
-    ${state.savings.map(s=>{
+    ${state.savings.length? state.savings.map(s=>{
       const hasGoal = s.goal!=null && s.goal>0;
       const pct = hasGoal? Math.min(100, Math.round(s.current/s.goal*100)) : null;
       const left = hasGoal? Math.max(0, s.goal-s.current) : null;
@@ -1131,12 +1273,13 @@ function renderSavings(){
         <div class="stat-big">${fmtMoney(s.current)} ${hasGoal?`<span style="font-size:13px;color:var(--ink-soft);">/ ${fmtMoney(s.goal)}</span>`:''}</div>
         ${hasGoal?`<div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:var(--gold);"></div></div>`:''}
         <div class="row-sub" style="margin-top:8px;">${hasGoal?'Осталось: '+fmtMoney(left)+' · ':''}Ежемесячно: ${fmtMoney(s.monthly)}</div>
+        <div class="row-sub">${s.cycleDays?'Цикл покупки: раз в '+s.cycleDays+' дн. · ':''}${s.lastPurchaseDate?'Последняя покупка: '+fmtDate(s.lastPurchaseDate):''}</div>
         <div style="display:flex;gap:6px;margin-top:12px;">
           <button class="btn btn-sm btn-primary" data-fund="${s.id}">${icon('plus')} Пополнить</button>
           <button class="icon-btn" data-del-saving="${s.id}">${icon('trash')}</button>
         </div>
       </div>`;
-    }).join('')}
+    }).join('') : `<div class="empty-note">Копилок пока нет — создайте новую или дождитесь синхронизации с бюджетным приложением.</div>`}
   </div>
   ${modalHost()}
   `;
@@ -1149,9 +1292,12 @@ function renderArchive(){
   <div class="topbar"><div><div class="page-title">Архив</div><div class="page-sub">Животные, которые больше не находятся дома</div></div></div>
   <div class="grid grid-cards">
     ${archived.length? archived.map(p=>`<div class="pet-card">
-      <div class="pet-photo">${speciesEmoji(p.species)}</div>
+      <div class="pet-photo">${p.photo?`<img src="${p.photo}"/>`:speciesEmoji(p.species)}</div>
       <div class="pet-info"><div class="name">${p.name}</div><div class="meta">${p.species}${p.breed?' · '+p.breed:''}</div>
-      <button class="btn btn-sm" style="margin-top:8px;" data-unarchive="${p.id}">Вернуть из архива</button></div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-sm" data-unarchive="${p.id}">Вернуть</button>
+        <button class="btn btn-sm btn-danger" data-delete-pet="${p.id}">${icon('trash')} Удалить навсегда</button>
+      </div></div>
     </div>`).join('') : `<div class="empty-note">Архив пуст.</div>`}
   </div>`;
 }
@@ -1167,7 +1313,7 @@ function renderSettings(){
     </div>
     <div class="card">
       <div class="card-title"><h3>Интеграция с бюджетным приложением «Наш Бюджет»</h3></div>
-      <div class="row-sub">Данные хранятся в общей структуре (животное → расход/копилка → сумма), готовой для подключения общего API. Прямая синхронизация появится, когда оба приложения будут работать с одной базой — категория «Животные» и копилки уже совместимы по формату с этим дашбордом.</div>
+      <div class="row-sub">Расходы категории «Животные» и копилки фонда животных подтягиваются сюда напрямую из общей базы данных в реальном времени.</div>
     </div>
     <div class="card">
       <div class="card-title"><h3>Резервное копирование</h3></div>
@@ -1197,18 +1343,27 @@ function modalPetForm(pet){
   return ()=>`<div class="overlay"><div class="modal">
     <h3>${editing?'Редактировать животное':'Новое животное'}</h3>
     <form id="mform">
+      <div class="field">
+        <label>Фото</label>
+        <div class="photo-pick">
+          <img class="preview" id="petPhotoPreview" src="${pet.photo||''}" style="${pet.photo?'':'display:none;'}"/>
+          <input type="file" name="photoFile" accept="image/*" id="petPhotoInput">
+        </div>
+      </div>
       <div class="field-row"><div class="field"><label>Имя</label><input name="name" value="${pet.name||''}" required></div>
       <div class="field"><label>Вид</label><input name="species" value="${pet.species||''}" placeholder="Кошка, собака..." required></div></div>
       <div class="field-row"><div class="field"><label>Порода</label><input name="breed" value="${pet.breed||''}"></div>
-      <div class="field"><label>Пол</label><select name="sex"><option ${pet.sex==='Самец'?'selected':''}>Самец</option><option ${pet.sex==='Самка'?'selected':''}>Самка</option></select></div></div>
+      <div class="field"><label>Пол</label><select name="sex" id="petSexSelect"><option ${pet.sex==='Самец'?'selected':''}>Самец</option><option ${pet.sex==='Самка'?'selected':''}>Самка</option></select></div></div>
       <div class="field-row"><div class="field"><label>Дата рождения</label><input type="date" name="dob" value="${pet.dob||''}"></div>
       <div class="field"><label>Вес (кг)</label><input type="number" step="0.1" name="weight" value="${pet.weight||''}"></div></div>
       <div class="field-row"><div class="field"><label>Окрас</label><input name="color" value="${pet.color||''}"></div>
       <div class="field"><label>Статус</label><select name="status"><option value="дома" ${pet.status==='дома'?'selected':''}>Дома</option><option value="передержка" ${pet.status==='передержка'?'selected':''}>На передержке</option><option value="другое" ${pet.status==='другое'?'selected':''}>Другое</option></select></div></div>
+      <div class="field-row"><div class="field"><label id="neuterLabel">${pet.sex==='Самец'?'Кастрация':'Стерилизация'}</label><select name="neutered" id="neuterSelect">${(pet.sex==='Самец'?[['нет','Не кастрирован'],['да','Кастрирован'],['неизвестно','Неизвестно']]:[['нет','Не стерилизована'],['да','Стерилизована'],['неизвестно','Неизвестно']]).map(([v,l])=>`<option value="${v}" ${pet.neutered===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="field"><label>Дата процедуры (если есть)</label><input type="date" name="neuteredDate" value="${pet.neuteredDate||''}"></div></div>
       <div class="field"><label>Особенности</label><input name="traits" value="${pet.traits||''}"></div>
       <div class="field"><label>Описание</label><textarea name="description">${pet.description||''}</textarea></div>
       <div class="modal-actions">
-        ${editing?`<button type="button" class="btn btn-danger" id="archivePetBtn">Отправить в архив</button>`:''}
+        ${editing?`<button type="button" class="btn btn-danger" id="archivePetBtn" data-archive-id="${pet.id}">${icon('archive')} Отправить в архив</button>`:''}
         <button type="button" class="btn" id="cancelBtn">Отмена</button>
         <button type="submit" class="btn btn-primary">Сохранить</button>
       </div>
@@ -1233,8 +1388,10 @@ function modalHealthForm(petId, type){
     <form id="mform">
       <div class="field"><label>Животное</label>${fieldsPetSelect(petId)}</div>
       ${type==='health'?`<div class="field"><label>Тип</label><select name="type">${['лекарство','заболевание','операция','анализ','обследование','аллергия','хроническое состояние','рекомендация'].map(t=>`<option>${t}</option>`).join('')}</select></div>`:`<input type="hidden" name="type" value="${type==='treatment'?'обработка':'вакцинация'}">`}
-      ${type==='treatment'?`<div class="field"><label>Подтип</label><select name="subtype">${['от блох','от клещей','от глистов','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div>`:''}
-      <div class="field"><label>Название</label><input name="title" required></div>
+      ${type==='treatment'?`<div class="field"><label>Тип паразитов</label><select name="subtype">${['от блох','от клещей','от блох и клещей','от глистов','от москитов','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div>`:''}
+      ${type==='vaccination'?`<div class="field"><label>Группа / от чего прививка</label><select name="group">${['бешенство','комплексная (кошки)','комплексная (собаки)','лишай','лептоспироз','другое'].map(g=>`<option>${g}</option>`).join('')}</select></div>`:''}
+      <div class="field"><label>Название препарата</label><input name="title" placeholder="Название лекарства/вакцины" required></div>
+      ${type==='treatment'?`<div class="field"><label>Производитель / бренд</label><input name="brand" placeholder="Bayer, MSD, Bravecto..."></div>`:''}
       <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div>
       <div class="field"><label>Срок действия (дней)</label><input type="number" name="validDays" value="${type==='treatment'?30:type==='vaccination'?365:''}"></div></div>
       ${type==='vaccination'?`<div class="field"><label>Ветеринар/клиника</label><input name="vet"></div>`:''}
@@ -1242,16 +1399,20 @@ function modalHealthForm(petId, type){
       <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
     </form></div></div>`;
 }
-function modalVetForm(petId){
-  return ()=>`<div class="overlay"><div class="modal"><h3>Добавить визит к ветеринару</h3>
+function modalVetForm(petId, visit){
+  const editing = !!visit; visit = visit||{};
+  const defaultStatus = visit.status || (visit.date && visit.date < todayISO() ? 'состоялся' : 'запланирован');
+  return ()=>`<div class="overlay"><div class="modal"><h3>${editing?'Изменить визит':'Добавить визит к ветеринару'}</h3>
     <form id="mform">
-      <div class="field"><label>Животное</label>${fieldsPetSelect(petId)}</div>
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div>
-      <div class="field"><label>Стоимость (€)</label><input type="number" step="0.01" name="cost"></div></div>
-      <div class="field"><label>Клиника/врач</label><input name="clinic"></div>
-      <div class="field"><label>Причина посещения</label><input name="reason"></div>
-      <div class="field"><label>Диагноз</label><input name="diagnosis"></div>
-      <div class="field"><label>Рекомендации</label><textarea name="recommendations"></textarea></div>
+      ${editing?`<input type="hidden" name="id" value="${visit.id}">`:''}
+      <div class="field"><label>Животное</label>${fieldsPetSelect(visit.petId||petId)}</div>
+      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${visit.date||todayISO()}"></div>
+      <div class="field"><label>Статус</label><select name="status"><option value="запланирован" ${defaultStatus==='запланирован'?'selected':''}>Запланирован</option><option value="состоялся" ${defaultStatus==='состоялся'?'selected':''}>Состоялся</option></select></div></div>
+      <div class="field"><label>Клиника/врач</label><input name="clinic" value="${visit.clinic||''}"></div>
+      <div class="field"><label>Причина посещения</label><input name="reason" value="${visit.reason||''}"></div>
+      <div class="field-row"><div class="field"><label>Диагноз (если известен)</label><input name="diagnosis" value="${visit.diagnosis||''}"></div>
+      <div class="field"><label>Стоимость (€)</label><input type="number" step="0.01" name="cost" value="${visit.cost||''}"></div></div>
+      <div class="field"><label>Рекомендации</label><textarea name="recommendations">${visit.recommendations||''}</textarea></div>
       <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
     </form></div></div>`;
 }
@@ -1286,12 +1447,12 @@ function modalRangeForm(petId){
       <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
     </form></div></div>`;
 }
-function modalCalEventForm(){
+function modalCalEventForm(dateVal){
   return ()=>`<div class="overlay"><div class="modal"><h3>Новое событие</h3>
     <form id="mform">
       <div class="field"><label>Животное (необязательно)</label><select name="petId"><option value="">— общее —</option>${activePets().map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
       <div class="field"><label>Название</label><input name="title" required></div>
-      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${todayISO()}"></div>
+      <div class="field-row"><div class="field"><label>Дата</label><input type="date" name="date" value="${dateVal||todayISO()}"></div>
       <div class="field"><label>Тип</label><select name="type">${['прививка','обработка','ветеринар','анализ','лекарство','операция','покупка корма','покупка наполнителя','другое'].map(t=>`<option>${t}</option>`).join('')}</select></div></div>
       <div class="field"><label>Описание</label><textarea name="description"></textarea></div>
       <div class="field"><label>Повторять каждые (дней, необязательно)</label><input type="number" name="repeatEveryDays"></div>
@@ -1302,7 +1463,15 @@ function modalSupplyForm(){
   return ()=>`<div class="overlay"><div class="modal"><h3>Добавить товар</h3>
     <form id="mform">
       <div class="field"><label>Название</label><input name="name" required></div>
-      <div class="field"><label>Животное / группа</label><select name="petId"><option value="all">Все животные</option>${activePets().map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+      <div class="field"><label>Для кого</label>
+        <select name="petId">
+          <option value="all">Все животные</option>
+          <option value="group:dogs">Категория: Собаки</option>
+          <option value="group:cats">Категория: Кошки</option>
+          <option value="group:kittens">Категория: Котята</option>
+          ${activePets().map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+      </div>
       <div class="field-row"><div class="field"><label>Текущий запас</label><input type="number" step="0.1" name="currentStock" required></div>
       <div class="field"><label>Единица</label><input name="unit" placeholder="кг, шт, л" required></div></div>
       <div class="field-row"><div class="field"><label>Средний расход / день</label><input type="number" step="0.01" name="avgConsumption" required></div>
@@ -1321,10 +1490,12 @@ function modalRestockForm(supplyId){
 function modalSavingsForm(){
   return ()=>`<div class="overlay"><div class="modal"><h3>Новая копилка</h3>
     <form id="mform">
-      <div class="field"><label>Название</label><input name="name" placeholder="Прививки, Ветеринар..." required></div>
-      <div class="field-row"><div class="field"><label>Цель (€) — необязательно</label><input type="number" step="1" name="goal"></div>
+      <div class="field"><label>Название</label><input name="name" placeholder="Корм котикам, Ветеринар..." required></div>
+      <div class="field-row"><div class="field"><label>Стоимость одной покупки (€) — необязательно</label><input type="number" step="1" name="totalCost"></div>
       <div class="field"><label>Уже накоплено (€)</label><input type="number" step="1" name="current" value="0"></div></div>
-      <div class="field"><label>Ежемесячное пополнение (€)</label><input type="number" step="1" name="monthly" value="0"></div>
+      <div class="field-row"><div class="field"><label>Ежемесячное пополнение (€)</label><input type="number" step="1" name="monthly" value="0"></div>
+      <div class="field"><label>Периодичность покупки (дней)</label><input type="number" step="1" name="cycleDays" value="30"></div></div>
+      <div class="field"><label>Эмодзи</label><input name="emoji" value="🐾" maxlength="4"></div>
       <div class="modal-actions"><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Создать</button></div>
     </form></div></div>`;
 }
@@ -1349,26 +1520,58 @@ function modalReminderSettingsForm(){
 function bindModalFieldEvents(){
   const cancel = document.getElementById('cancelBtn'); if(cancel) cancel.onclick = closeModal;
   const archiveBtn = document.getElementById('archivePetBtn');
-  if(archiveBtn) archiveBtn.onclick = ()=>{ const id = archiveBtn.closest('form').dataset.petId; };
+  if(archiveBtn) archiveBtn.onclick = ()=>{
+    const id = archiveBtn.dataset.archiveId;
+    if(id && !state.archive.includes(id)){
+      state.archive.push(id);
+      scheduleSave();
+      toast('Животное отправлено в архив');
+      closeModal();
+      nav('pets');
+    }
+  };
+  const sexSelect = document.getElementById('petSexSelect');
+  if(sexSelect) sexSelect.onchange = ()=>{
+    const male = sexSelect.value==='Самец';
+    const label = document.getElementById('neuterLabel');
+    const sel = document.getElementById('neuterSelect');
+    if(label) label.textContent = male?'Кастрация':'Стерилизация';
+    if(sel) sel.innerHTML = (male?[['нет','Не кастрирован'],['да','Кастрирован'],['неизвестно','Неизвестно']]:[['нет','Не стерилизована'],['да','Стерилизована'],['неизвестно','Неизвестно']]).map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  };
+  const photoInput = document.getElementById('petPhotoInput');
+  if(photoInput) photoInput.onchange = async ()=>{
+    const f = photoInput.files[0];
+    if(!f) return;
+    try{
+      const dataUrl = await resizeImageFile(f);
+      const preview = document.getElementById('petPhotoPreview');
+      if(preview){ preview.src = dataUrl; preview.style.display='block'; }
+      photoInput.dataset.resized = dataUrl;
+    }catch(err){ console.error(err); toast('Не удалось загрузить фото'); }
+  };
   const form = document.getElementById('mform');
   if(form) form.onsubmit = handleModalSubmit;
 }
 
 /* ============ SUBMIT HANDLERS ============ */
 let modalCtx = {};
-function handleModalSubmit(e){
+async function handleModalSubmit(e){
   e.preventDefault();
-  const fd = new FormData(e.target);
+  const formEl = e.target;
+  const fd = new FormData(formEl);
   const data = Object.fromEntries(fd.entries());
   const kind = modalCtx.kind;
 
   if(kind==='pet'){
+    const photoInput = document.getElementById('petPhotoInput');
+    const newPhoto = photoInput && photoInput.dataset.resized ? photoInput.dataset.resized : null;
     if(modalCtx.pet){
       Object.assign(modalCtx.pet, data);
       modalCtx.pet.weight = parseFloat(data.weight)||modalCtx.pet.weight;
+      if(newPhoto) modalCtx.pet.photo = newPhoto;
       toast('Животное обновлено');
     } else {
-      state.pets.push({id:uid(), ...data, weight:parseFloat(data.weight)||0, weightRange:{}, photo:'', createdAt:todayISO()});
+      state.pets.push({id:uid(), ...data, weight:parseFloat(data.weight)||0, weightRange:{}, photo:newPhoto||'', createdAt:todayISO()});
       toast('Животное добавлено');
     }
   }
@@ -1381,12 +1584,19 @@ function handleModalSubmit(e){
   else if(kind==='health' || kind==='treatment' || kind==='vaccination'){
     const validDays = parseInt(data.validDays)||null;
     const nextDate = validDays ? addDays(data.date, validDays) : null;
-    state.healthEvents.push({id:uid(), petId:data.petId, type:data.type, subtype:data.subtype||'', title:data.title, date:data.date, validDays, nextDate, comment:data.comment||'', vet:data.vet||''});
+    state.healthEvents.push({id:uid(), petId:data.petId, type:data.type, subtype:data.subtype||'', group:data.group||'', brand:data.brand||'', title:data.title, date:data.date, validDays, nextDate, comment:data.comment||'', vet:data.vet||''});
     toast('Запись добавлена');
   }
   else if(kind==='vet'){
-    state.vetVisits.push({id:uid(), petId:data.petId, date:data.date, clinic:data.clinic, reason:data.reason, diagnosis:data.diagnosis, recommendations:data.recommendations, cost:parseFloat(data.cost)||0});
-    toast('Визит добавлен');
+    const status = data.status || (data.date < todayISO() ? 'состоялся' : 'запланирован');
+    if(data.id){
+      const v = state.vetVisits.find(x=>x.id===data.id);
+      if(v) Object.assign(v, {date:data.date, clinic:data.clinic, reason:data.reason, diagnosis:data.diagnosis, recommendations:data.recommendations, cost:parseFloat(data.cost)||0, status});
+      toast('Визит обновлён');
+    } else {
+      state.vetVisits.push({id:uid(), petId:data.petId, date:data.date, clinic:data.clinic, reason:data.reason, diagnosis:data.diagnosis, recommendations:data.recommendations, cost:parseFloat(data.cost)||0, status});
+      toast('Визит добавлен');
+    }
   }
   else if(kind==='document'){
     state.documents.push({id:uid(), petId:data.petId, name:data.name, type:data.type, date:data.date, note:data.note||''});
@@ -1423,7 +1633,7 @@ function handleModalSubmit(e){
     toast('Запас пополнен');
   }
   else if(kind==='savingsGoal'){
-    pushToArrayRef(fundsRef, {name:data.name, goal:data.goal?parseFloat(data.goal):null, currentSaved:parseFloat(data.current)||0, monthlyAmount:parseFloat(data.monthly)||0, cycleDays:30, emoji:'🐾', color:'#4B6B4A', lastPurchaseDate:todayISO(), linkedPlanId:null})
+    pushToArrayRef(fundsRef, {name:data.name, totalCost:data.totalCost?parseFloat(data.totalCost):0, currentSaved:parseFloat(data.current)||0, monthlyAmount:parseFloat(data.monthly)||0, cycleDays:parseInt(data.cycleDays)||30, emoji:data.emoji||'🐾', color:'#4B6B4A', lastPurchaseDate:todayISO(), linkedPlanId:null, purchaseHistory:[]})
       .then(()=>toast('Копилка создана в общем бюджете'))
       .catch(()=>toast('Не удалось создать копилку'));
     closeModal(); return;
@@ -1431,7 +1641,9 @@ function handleModalSubmit(e){
   else if(kind==='fund'){
     const s = state.savings.find(x=>x.id===modalCtx.savingId);
     if(s){
-      updateArrayItem(fundsRef, s.id, {currentSaved:(s.current||0)+parseFloat(data.amount)})
+      const amount = parseFloat(data.amount)||0;
+      const newHistory = [...(s.history||[]), {date:todayISO(), amount, note:data.note||''}];
+      updateArrayItem(fundsRef, s.id, {currentSaved:(s.current||0)+amount, purchaseHistory:newHistory})
         .then(()=>toast('Копилка пополнена'))
         .catch(()=>toast('Не удалось пополнить копилку'));
     }
@@ -1480,6 +1692,17 @@ document.addEventListener('click', (e)=>{
 
   const delHealth = e.target.closest('[data-del-health]');
   if(delHealth){ state.healthEvents = state.healthEvents.filter(x=>x.id!==delHealth.dataset.delHealth); scheduleSave(); render(); return; }
+  const skipHealth = e.target.closest('[data-skip-health]');
+  if(skipHealth){
+    const h = state.healthEvents.find(x=>x.id===skipHealth.dataset.skipHealth);
+    if(h && h.nextDate){
+      const skippedFrom = h.nextDate;
+      h.nextDate = addDays(h.nextDate, h.validDays||30);
+      h.comment = (h.comment?h.comment+'; ':'')+'пропущено: '+fmtDate(skippedFrom);
+      scheduleSave(); render(); toast('Обработка пропущена — следующая дата перенесена');
+    }
+    return;
+  }
   const delVet = e.target.closest('[data-del-vet]');
   if(delVet){ state.vetVisits = state.vetVisits.filter(x=>x.id!==delVet.dataset.delVet); scheduleSave(); render(); return; }
   const delDoc = e.target.closest('[data-del-doc]');
@@ -1514,10 +1737,26 @@ document.addEventListener('click', (e)=>{
   if(printBtn){ window.print(); return; }
 
   const unarchive = e.target.closest('[data-unarchive]');
-  if(unarchive){ state.archive = state.archive.filter(id=>id!==unarchive.dataset.unarchive); scheduleSave(); render(); return; }
+  if(unarchive){ state.archive = state.archive.filter(id=>id!==unarchive.dataset.unarchive); scheduleSave(); render(); toast('Животное возвращено из архива'); return; }
+
+  const deletePet = e.target.closest('[data-delete-pet]');
+  if(deletePet){
+    const id = deletePet.dataset.deletePet;
+    if(confirm('Удалить это животное навсегда? Действие необратимо.')){
+      state.pets = state.pets.filter(p=>p.id!==id);
+      state.archive = state.archive.filter(x=>x!==id);
+      state.weightLogs = state.weightLogs.filter(x=>x.petId!==id);
+      state.healthEvents = state.healthEvents.filter(x=>x.petId!==id);
+      state.vetVisits = state.vetVisits.filter(x=>x.petId!==id);
+      state.documents = state.documents.filter(x=>x.petId!==id);
+      state.events = state.events.filter(x=>x.petId!==id);
+      scheduleSave(); render(); toast('Животное удалено');
+    }
+    return;
+  }
 
   const calDay = e.target.closest('[data-cal-day]');
-  if(calDay){ modalCtx={kind:'calevent'}; const iso=calDay.dataset.calDay; openModal(()=>modalCalEventForm()().replace(`value="${todayISO()}"`, `value="${iso}"`)); return; }
+  if(calDay){ modalCtx={kind:'calevent'}; const iso=calDay.dataset.calDay; openModal(modalCalEventForm(iso)); return; }
 
   const calPrev = e.target.closest('#calPrev');
   if(calPrev){ calCursor.setMonth(calCursor.getMonth()-1); render(); return; }
@@ -1544,9 +1783,6 @@ function downloadBackup(){
   const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pet-dashboard-backup.json'; a.click();
 }
-
-/* re-hook kind on quick clicks needs modalCtx set before openModal; fix ordering */
-const _origAddQuick = true;
 
 /* ============ SEARCH ============ */
 function renderSearchResults(q){
