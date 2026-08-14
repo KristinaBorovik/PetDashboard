@@ -283,6 +283,7 @@ let syncState = 'pending'; // pending | ok | off
 /* ============ STATE ============ */
 let state = null;
 let saveTimer = null;
+let pendingWrite = false; // true while a local save is queued or in-flight
 const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const todayISO = ()=> new Date().toISOString().slice(0,10);
 function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
@@ -372,36 +373,15 @@ async function removeArrayItem(ref, matchId){
 }
 
 const DEFAULT_STATE = ()=>({
-  pets:[
-    {id:'p1',name:'Булочка',species:'Кошка',breed:'Метис',dob:'2019-04-12',sex:'Самка',weight:4.2,weightRange:{min:3.8,max:4.6},color:'Рыжая с белым',traits:'Любит окна и коробки',description:'Домашняя, спокойная',status:'дома',photo:'',createdAt:todayISO()},
-    {id:'p2',name:'Кекс',species:'Собака',breed:'Джек-рассел',dob:'2021-02-01',sex:'Самец',weight:8.6,weightRange:{min:7.5,max:9},color:'Бело-рыжий',traits:'Энергичный, любит бегать',description:'',status:'дома',photo:'',createdAt:todayISO()},
-    {id:'p3',name:'Тень',species:'Кошка',breed:'Британская',dob:'2020-09-20',sex:'Самец',weight:5.8,weightRange:{min:5,max:6},color:'Серый',traits:'Спокойный, ленивый',description:'',status:'дома',photo:'',createdAt:todayISO()},
-    {id:'p4',name:'Персик',species:'Кролик',breed:'Карликовый',dob:'2023-05-10',sex:'Самка',weight:1.4,weightRange:{min:1.2,max:1.6},color:'Кремовый',traits:'На передержке у друзей',description:'Временно у нас',status:'передержка',photo:'',createdAt:todayISO()}
-  ],
-  weightLogs:[
-    {id:uid(),petId:'p1',date:'2026-06-15',weight:4.4,comment:''},
-    {id:uid(),petId:'p1',date:'2026-07-15',weight:4.3,comment:''},
-    {id:uid(),petId:'p1',date:'2026-08-14',weight:4.2,comment:''}
-  ],
-  healthEvents:[
-    {id:uid(),petId:'p1',type:'вакцинация',title:'Комплексная вакцина',date:'2025-09-10',description:'',group:'комплексная',validDays:365,nextDate:'2026-09-10',comment:'',vet:'Клиника «Ковчег»'},
-    {id:uid(),petId:'p1',type:'обработка',subtype:'от блох и клещей',title:'Капли от блох и клещей',brand:'',date:'2026-07-15',description:'',validDays:30,nextDate:'2026-08-19',comment:''},
-    {id:uid(),petId:'p2',type:'обработка',subtype:'от глистов',title:'Таблетка от глистов',brand:'',date:'2026-07-20',description:'',validDays:90,nextDate:'2026-10-18',comment:''}
-  ],
-  vetVisits:[
-    {id:uid(),petId:'p1',date:'2026-05-02',clinic:'Клиника «Ковчег»',reason:'Плановый осмотр',diagnosis:'Здорова',recommendations:'Контроль веса',cost:25}
-  ],
+  pets:[],
+  weightLogs:[],
+  healthEvents:[],
+  vetVisits:[],
   documents:[],
   expenses:[],
   savings:[],
-  events:[
-    {id:uid(),petId:'p1',type:'обработка',title:'Обработка от паразитов — Булочка',date:'2026-08-19',description:'Капли от блох и клещей',repeatEveryDays:30,done:false},
-    {id:uid(),petId:'p1',type:'вакцинация',title:'Прививка — Булочка',date:'2026-09-10',description:'Комплексная вакцина',repeatEveryDays:365,done:false}
-  ],
-  supplies:[
-    {id:uid(),name:'Корм сухой',petId:'group:cats',currentStock:4,unit:'кг',avgConsumption:0.25,lastPurchaseDate:'2026-08-01',lastPurchaseQty:5,lastPurchaseCost:32,history:[{date:'2026-08-01',qty:5,cost:32}]},
-    {id:uid(),name:'Наполнитель',petId:'p1',currentStock:2,unit:'кг',avgConsumption:0.6,lastPurchaseDate:'2026-08-05',lastPurchaseQty:10,lastPurchaseCost:14,history:[{date:'2026-08-05',qty:10,cost:14}]}
-  ],
+  events:[],
+  supplies:[],
   reminderSettings:{offsets:[30,14,7,3,1]},
   currentUser:'Кристина',
   archive:[]
@@ -414,9 +394,12 @@ async function loadState(){
     const remote = snap.val();
     if(remote){
       Object.assign(state, remote, {expenses: state.expenses, savings: state.savings});
-    } else {
-      await persist();
     }
+    // NOTE: intentionally NOT auto-writing default/demo data to Firebase when
+    // remote is empty. Auto-writing here was clobbering real data on other
+    // devices whenever a read raced ahead of the real data (or the app was
+    // opened before the real database finished loading), and it re-seeded
+    // fake demo pets/vaccinations that nobody actually created.
     syncState = 'ok';
   }catch(e){
     console.error('load failed', e); syncState='off';
@@ -425,6 +408,12 @@ async function loadState(){
 
   // live updates from other devices/users for the pet-dashboard's own data
   petDashRef.on('value', snap=>{
+    // While we have a local change queued/in-flight, ignore incoming echoes.
+    // Otherwise a remote snapshot that predates our own edit can silently
+    // overwrite (undo) a delete/edit made a moment ago, before our own
+    // write has landed - this is what caused "deleted items reappear" and
+    // "different data on different devices".
+    if(pendingWrite) return;
     const remote = snap.val();
     if(!remote) return;
     Object.assign(state, remote, {expenses: state.expenses, savings: state.savings});
@@ -471,6 +460,7 @@ async function loadState(){
 }
 function scheduleSave(){
   clearTimeout(saveTimer);
+  pendingWrite = true;
   const dot = document.getElementById('syncDot'); if(dot) dot.className='sync-dot pending';
   saveTimer = setTimeout(()=>persist(), 500);
 }
@@ -481,6 +471,9 @@ async function persist(){
     syncState = 'ok';
   }
   catch(e){ console.error('save failed', e); syncState='off'; toast('Не удалось сохранить данные — проверьте связь'); }
+  finally{
+    pendingWrite = false; // only now is it safe to accept remote echoes again
+  }
   const dot = document.getElementById('syncDot'); const label = document.getElementById('syncLabel');
   if(dot){ dot.className = 'sync-dot '+(syncState==='ok'?'':'off'); }
   if(label){ label.textContent = syncState==='ok' ? 'Синхронизировано' : 'Нет связи'; }
